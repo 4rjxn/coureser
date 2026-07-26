@@ -2,30 +2,52 @@ package com.courser.dao;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 import com.courser.model.Student;
 import com.courser.model.User;
 import com.courser.utils.Database;
 
 public class UserDao {
-    public static boolean addUser(User user) {
-        Connection conn;
-        String sql = """
+    public static void addStudent(Student student) throws SQLException {
+        String userAddSql = """
                 INSERT INTO users(username, name, email)
                 VALUES (?, ?, ?)
+                RETURNING user_id
                 """;
+        String studentAddSql = """
+                INSERT INTO students(user_id,student_id,max_credits)
+                VALUES (?,?,?)
+                """;
+        Connection conn = Database.getConnection();
         try {
-            conn = Database.getConnection();
-            PreparedStatement preparedStatement = conn.prepareStatement(sql);
-            preparedStatement.setString(1, user.getUserName());
-            preparedStatement.setString(2, user.getName());
-            preparedStatement.setString(3, user.getEmail());
-            preparedStatement.executeUpdate();
-            return true;
+            conn.setAutoCommit(false);
+            PreparedStatement userStmt = conn.prepareStatement(userAddSql);
+            userStmt.setString(1, student.getUserName());
+            userStmt.setString(2, student.getName());
+            userStmt.setString(3, student.getEmail());
+            ResultSet rs = userStmt.executeQuery();
+            if (!rs.next()) {
+                throw new SQLException("Failed to get user id.");
+            }
+            int userId = rs.getInt(1);
+            rs.close();
+            PreparedStatement studentStmt = conn.prepareStatement(studentAddSql);
 
+            studentStmt.setInt(1, userId);
+            studentStmt.setString(2, student.getStudentId());
+            studentStmt.setInt(3, student.getMaxCredits());
+
+            studentStmt.executeUpdate();
+
+            conn.commit();
         } catch (Exception e) {
-            System.out.println(e);
-            return false;
+            conn.rollback();
+            throw e;
+        } finally {
+            conn.setAutoCommit(true);
+            conn.close();
         }
     }
 

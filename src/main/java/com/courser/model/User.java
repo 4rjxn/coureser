@@ -1,10 +1,10 @@
 package com.courser.model;
 
 public class User {
-    int userId;
-    String userName;
-    String name;
-    String email;
+    private int userId;
+    private String userName;
+    private String name;
+    private String email;
 
     User(int userId, String userName, String name, String email) {
         this.userId = userId;
@@ -12,6 +12,10 @@ public class User {
         this.name = name;
         this.email = email;
     };
+
+    public int getUserId() {
+        return userId;
+    }
 
     public String getUserName() {
         return userName;
