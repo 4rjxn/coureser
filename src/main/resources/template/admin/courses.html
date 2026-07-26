@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Courses</title>
+</head>
+<body>
+
+<header>
+
+    <h1>Course Management System</h1>
+
+    <p>Manage Courses</p>
+
+    <hr>
+
+</header>
+
+<nav>
+
+    <a href="/admin/dashboard">Dashboard</a> |
+    <a href="/admin/students">Students</a> |
+    <a href="/admin/teachers">Teachers</a> |
+    <a href="/admin/courses">Courses</a> |
+    <a href="/admin/registrations">Registrations</a> |
+    <a href="/logout">Logout</a>
+
+</nav>
+
+<hr>
+
+<main>
+
+<section>
+
+    <h2>Search Courses</h2>
+
+    <form action="/admin/courses/search" method="get">
+
+        <label for="query">
+            Course Code or Title
+        </label>
+
+        <input
+            type="search"
+            id="query"
+            name="query"
+            placeholder="Search...">
+
+        <button type="submit">
+            Search
+        </button>
+
+    </form>
+
+</section>
+
+<hr>
+
+<section>
+
+    <h2>Actions</h2>
+
+    <p>
+
+        <a href="/admin/courses/add">
+            Add New Course
+        </a>
+
+    </p>
+
+</section>
+
+<hr>
+
+<section>
+
+    <h2>Course List</h2>
+
+    <table border="1">
+
+        <thead>
+
+            <tr>
+                <th>Code</th>
+                <th>Title</th>
+                <th>Credits</th>
+                <th>Teacher</th>
+                <th>Prerequisites</th>
+                <th>Actions</th>
+            </tr>
+
+        </thead>
+
+        <tbody>
+
+            {{courseRows}}
+
+        </tbody>
+
+    </table>
+
+</section>
+
+<hr>
+
+<section>
+
+    <h2>Pages</h2>
+
+    <p>
+
+        <a href="{{previousPage}}">
+            Previous
+        </a>
+
+        &nbsp;
+
+        Page {{currentPage}} of {{totalPages}}
+
+        &nbsp;
+
+        <a href="{{nextPage}}">
+            Next
+        </a>
+
+    </p>
+
+</section>
+
+</main>
+
+<hr>
+
+<footer>
+
+<p>
+
+    Total Courses:
+    {{courseCount}}
+
+</p>
+
+</footer>
+
+</body>
+</html>
+

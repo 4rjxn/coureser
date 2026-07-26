@@ -1,0 +1,143 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Teacher</title>
+</head>
+<body>
+
+<header>
+
+    <h1>Course Management System</h1>
+
+    <p>Add Teacher</p>
+
+    <hr>
+
+</header>
+
+<nav>
+
+    <a href="/admin/dashboard">Dashboard</a> |
+    <a href="/admin/students">Students</a> |
+    <a href="/admin/teachers">Teachers</a> |
+    <a href="/admin/courses">Courses</a> |
+    <a href="/admin/registrations">Registrations</a> |
+    <a href="/logout">Logout</a>
+
+</nav>
+
+<hr>
+
+<main>
+
+<form action="/admin/teachers/add" method="post">
+
+    <fieldset>
+
+        <legend>Account Information</legend>
+
+        <p>
+            <label for="username">Username</label>
+            <br>
+            <input
+                type="text"
+                id="username"
+                name="username"
+                required>
+        </p>
+
+        <p>
+            <label for="name">Full Name</label>
+            <br>
+            <input
+                type="text"
+                id="name"
+                name="name"
+                required>
+        </p>
+
+        <p>
+            <label for="email">Email</label>
+            <br>
+            <input
+                type="email"
+                id="email"
+                name="email"
+                required>
+        </p>
+
+        <p>
+            <label for="password">Password</label>
+            <br>
+            <input
+                type="password"
+                id="password"
+                name="password"
+                required>
+        </p>
+
+    </fieldset>
+
+    <br>
+
+    <fieldset>
+
+        <legend>Teacher Information</legend>
+
+        <p>
+            <label for="teacherId">Teacher ID</label>
+            <br>
+            <input
+                type="text"
+                id="teacherId"
+                name="teacherId"
+                required>
+        </p>
+
+        <p>
+            <label for="department">Department</label>
+            <br>
+            <input
+                type="text"
+                id="department"
+                name="department"
+                required>
+        </p>
+
+    </fieldset>
+
+    <br>
+
+    <button type="submit">
+        Add Teacher
+    </button>
+
+    <button type="reset">
+        Clear
+    </button>
+
+</form>
+
+</main>
+
+<hr>
+
+<footer>
+
+<p>
+
+    <a href="/admin/teachers">
+        Back to Teacher List
+    </a>
+
+</p>
+
+</footer>
+
+</body>
+</html>
+```
+

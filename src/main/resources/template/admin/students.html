@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Students</title>
+</head>
+<body>
+
+<header>
+    <h1>Course Management System</h1>
+    <p>Manage Students</p>
+    <hr>
+</header>
+
+<nav>
+    <a href="/admin/dashboard">Dashboard</a> |
+    <a href="/admin/students">Students</a> |
+    <a href="/admin/teachers">Teachers</a> |
+    <a href="/admin/courses">Courses</a> |
+    <a href="/admin/registrations">Registrations</a> |
+    <a href="/logout">Logout</a>
+</nav>
+
+<hr>
+
+<main>
+
+<section>
+
+    <h2>Search Students</h2>
+
+    <form action="/admin/students/search" method="get">
+
+        <label for="query">
+            Student ID or Name
+        </label>
+
+        <input
+            type="search"
+            id="query"
+            name="query"
+            placeholder="Search...">
+
+        <button type="submit">
+            Search
+        </button>
+
+    </form>
+
+</section>
+
+<hr>
+
+<section>
+
+    <h2>Actions</h2>
+
+    <p>
+        <a href="/admin/students/add">
+            Add New Student
+        </a>
+    </p>
+
+</section>
+
+<hr>
+
+<section>
+
+    <h2>Student List</h2>
+
+    <table border="1">
+
+        <thead>
+
+            <tr>
+                <th>Student ID</th>
+                <th>Name</th>
+                <th>Username</th>
+                <th>Email</th>
+                <th>Max Credits</th>
+                <th>Actions</th>
+            </tr>
+
+        </thead>
+
+        <tbody>
+
+            {{studentRows}}
+
+        </tbody>
+
+    </table>
+
+</section>
+
+<hr>
+
+<section>
+
+    <h2>Pages</h2>
+
+    <p>
+
+        <a href="{{previousPage}}">
+            Previous
+        </a>
+
+        &nbsp;
+
+        Page {{currentPage}} of {{totalPages}}
+
+        &nbsp;
+
+        <a href="{{nextPage}}">
+            Next
+        </a>
+
+    </p>
+
+</section>
+
+</main>
+
+<hr>
+
+<footer>
+
+<p>
+
+    Total Students:
+    {{studentCount}}
+
+</p>
+
+</footer>
+
+</body>
+</html>
+

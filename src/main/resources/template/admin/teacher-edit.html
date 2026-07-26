@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Teacher</title>
+</head>
+<body>
+
+<header>
+
+    <h1>Course Management System</h1>
+
+    <p>Edit Teacher</p>
+
+    <hr>
+
+</header>
+
+<nav>
+
+    <a href="/admin/dashboard">Dashboard</a> |
+    <a href="/admin/students">Students</a> |
+    <a href="/admin/teachers">Teachers</a> |
+    <a href="/admin/courses">Courses</a> |
+    <a href="/admin/registrations">Registrations</a> |
+    <a href="/logout">Logout</a>
+
+</nav>
+
+<hr>
+
+<main>
+
+<h2>Teacher Information</h2>
+
+<form action="/admin/teachers/edit" method="post">
+
+    <input
+        type="hidden"
+        name="userId"
+        value="{{userId}}">
+
+    <fieldset>
+
+        <legend>Account Information</legend>
+
+        <p>
+
+            <label for="username">
+                Username
+            </label>
+
+            <br>
+
+            <input
+                type="text"
+                id="username"
+                name="username"
+                value="{{username}}"
+                required>
+
+        </p>
+
+        <p>
+
+            <label for="name">
+                Full Name
+            </label>
+
+            <br>
+
+            <input
+                type="text"
+                id="name"
+                name="name"
+                value="{{name}}"
+                required>
+
+        </p>
+
+        <p>
+
+            <label for="email">
+                Email
+            </label>
+
+            <br>
+
+            <input
+                type="email"
+                id="email"
+                name="email"
+                value="{{email}}"
+                required>
+
+        </p>
+
+    </fieldset>
+
+    <br>
+
+    <fieldset>
+
+        <legend>Teacher Information</legend>
+
+        <p>
+
+            <label for="teacherId">
+                Teacher ID
+            </label>
+
+            <br>
+
+            <input
+                type="text"
+                id="teacherId"
+                name="teacherId"
+                value="{{teacherId}}"
+                readonly>
+
+        </p>
+
+        <p>
+
+            <label for="department">
+                Department
+            </label>
+
+            <br>
+
+            <input
+                type="text"
+                id="department"
+                name="department"
+                value="{{department}}"
+                required>
+
+        </p>
+
+    </fieldset>
+
+    <br>
+
+    <button type="submit">
+        Save Changes
+    </button>
+
+    <button type="reset">
+        Reset
+    </button>
+
+    <a href="/admin/teachers">
+        Cancel
+    </a>
+
+</form>
+
+</main>
+
+<hr>
+
+<footer>
+
+<p>
+
+    <a href="/admin/teachers">
+        Back to Teacher List
+    </a>
+
+</p>
+
+</footer>
+
+</body>
+</html>
+

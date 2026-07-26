@@ -1,4 +1,4 @@
-package com.courser;
+package com.courser.server;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -12,10 +12,26 @@ import java.util.concurrent.ConcurrentHashMap;
 import com.sun.net.httpserver.HttpServer;
 import com.sun.net.httpserver.HttpExchange;
 
-class Server {
-    static void serve(int PORT) throws IOException {
+public class Server {
+    public static void serve(int PORT) throws IOException {
         HttpServer server = HttpServer.create(new InetSocketAddress(PORT), 0);
-        server.createContext("/", exchange -> respond(exchange, "template/index.html", Map.of("H", "H")));
+        server.createContext("/", exchange -> respond(exchange, "template/index.html", Map.of()));
+        server.createContext("/admin",
+                exchange -> ServerHandles.handleAdminDashboard(exchange, "template/admin/dashboard.html"));
+        server.createContext("/admin/students",
+                exchange -> ServerHandles.handleAdminStudents(exchange, "template/admin/students.html"));
+        server.createContext("/admin/students/add",
+                exchange -> ServerHandles.handleAdminStudentsAdd(exchange, "template/admin/student-add.html"));
+        server.createContext("/admin/students/edit",
+                exchange -> respond(exchange, "template/admin/student-edit.html", Map.of("H", "H")));
+        server.createContext("/admin/courses",
+                exchange -> respond(exchange, "template/admin/courses.html", Map.of("H", "H")));
+        server.createContext("/admin/courses/add",
+                exchange -> respond(exchange, "template/admin/course-add.html", Map.of("H", "H")));
+        server.createContext("/admin/courses/edit",
+                exchange -> respond(exchange, "template/admin/course-edit.html", Map.of("H", "H")));
+        server.createContext("/admin/registrations",
+                exchange -> respond(exchange, "template/admin/registrations.html", Map.of("H", "H")));
         server.setExecutor(null);
         server.start();
         System.out.println("Server started listening on: " + PORT);
@@ -41,7 +57,17 @@ class Server {
         });
     }
 
-    private static void respond(HttpExchange exchange, String templatePath, Map<String, String> values)
+    static void redirect(HttpExchange exchange, String location)
+            throws IOException {
+
+        exchange.getResponseHeaders().add("Location", location);
+
+        exchange.sendResponseHeaders(302, -1);
+
+        exchange.close();
+    }
+
+    static void respond(HttpExchange exchange, String templatePath, Map<String, String> values)
             throws IOException {
         String template = loadTemplate(templatePath);
         String html = fillTemplate(template, values);

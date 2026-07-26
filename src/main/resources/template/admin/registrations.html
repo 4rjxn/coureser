@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Course Registrations</title>
+</head>
+<body>
+
+<header>
+
+    <h1>Course Management System</h1>
+
+    <p>Manage Course Registrations</p>
+
+    <hr>
+
+</header>
+
+<nav>
+
+    <a href="/admin/dashboard">Dashboard</a> |
+    <a href="/admin/students">Students</a> |
+    <a href="/admin/teachers">Teachers</a> |
+    <a href="/admin/courses">Courses</a> |
+    <a href="/admin/registrations">Registrations</a> |
+    <a href="/logout">Logout</a>
+
+</nav>
+
+<hr>
+
+<main>
+
+<section>
+
+    <h2>Register Student</h2>
+
+    <form action="/admin/registrations/add" method="post">
+
+        <p>
+
+            <label for="studentId">
+                Student
+            </label>
+
+            <br>
+
+            <select
+                id="studentId"
+                name="studentId"
+                required>
+
+                {{studentOptions}}
+
+            </select>
+
+        </p>
+
+        <p>
+
+            <label for="courseId">
+                Course
+            </label>
+
+            <br>
+
+            <select
+                id="courseId"
+                name="courseId"
+                required>
+
+                {{courseOptions}}
+
+            </select>
+
+        </p>
+
+        <button type="submit">
+            Register Student
+        </button>
+
+    </form>
+
+</section>
+
+<hr>
+
+<section>
+
+    <h2>Search Registrations</h2>
+
+    <form action="/admin/registrations/search" method="get">
+
+        <label for="query">
+            Student ID, Name or Course
+        </label>
+
+        <input
+            type="search"
+            id="query"
+            name="query"
+            placeholder="Search...">
+
+        <button type="submit">
+            Search
+        </button>
+
+    </form>
+
+</section>
+
+<hr>
+
+<section>
+
+    <h2>Current Registrations</h2>
+
+    <table border="1">
+
+        <thead>
+
+            <tr>
+                <th>Student ID</th>
+                <th>Student Name</th>
+                <th>Course Code</th>
+                <th>Course Title</th>
+                <th>Credits</th>
+                <th>Action</th>
+            </tr>
+
+        </thead>
+
+        <tbody>
+
+            {{registrationRows}}
+
+        </tbody>
+
+    </table>
+
+</section>
+
+<hr>
+
+<section>
+
+    <h2>Pages</h2>
+
+    <p>
+
+        <a href="{{previousPage}}">
+            Previous
+        </a>
+
+        &nbsp;
+
+        Page {{currentPage}} of {{totalPages}}
+
+        &nbsp;
+
+        <a href="{{nextPage}}">
+            Next
+        </a>
+
+    </p>
+
+</section>
+
+</main>
+
+<hr>
+
+<footer>
+
+<p>
+
+    Total Registrations:
+    {{registrationCount}}
+
+</p>
+
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Student</title>
+</head>
+<body>
+
+<header>
+
+    <h1>Course Management System</h1>
+
+    <p>Edit Student</p>
+
+    <hr>
+
+</header>
+
+<nav>
+
+    <a href="/admin/dashboard">Dashboard</a> |
+    <a href="/admin/students">Students</a> |
+    <a href="/admin/teachers">Teachers</a> |
+    <a href="/admin/courses">Courses</a> |
+    <a href="/admin/registrations">Registrations</a> |
+    <a href="/logout">Logout</a>
+
+</nav>
+
+<hr>
+
+<main>
+
+<h2>Student Information</h2>
+
+<form action="/admin/students/edit" method="post">
+
+    <!-- Internal database identifier -->
+    <input
+        type="hidden"
+        name="userId"
+        value="{{userId}}">
+
+    <fieldset>
+
+        <legend>Account Information</legend>
+
+        <p>
+
+            <label for="username">Username</label>
+
+            <br>
+
+            <input
+                type="text"
+                id="username"
+                name="username"
+                value="{{username}}"
+                required>
+
+        </p>
+
+        <p>
+
+            <label for="name">Full Name</label>
+
+            <br>
+
+            <input
+                type="text"
+                id="name"
+                name="name"
+                value="{{name}}"
+                required>
+
+        </p>
+
+        <p>
+
+            <label for="email">Email</label>
+
+            <br>
+
+            <input
+                type="email"
+                id="email"
+                name="email"
+                value="{{email}}"
+                required>
+
+        </p>
+
+    </fieldset>
+
+    <br>
+
+    <fieldset>
+
+        <legend>Student Information</legend>
+
+        <p>
+
+            <label for="studentId">Student ID</label>
+
+            <br>
+
+            <input
+                type="text"
+                id="studentId"
+                name="studentId"
+                value="{{studentId}}"
+                readonly>
+
+        </p>
+
+        <p>
+
+            <label for="maxCredits">Maximum Credits</label>
+
+            <br>
+
+            <input
+                type="number"
+                id="maxCredits"
+                name="maxCredits"
+                min="1"
+                value="{{maxCredits}}"
+                required>
+
+        </p>
+
+    </fieldset>
+
+    <br>
+
+    <button type="submit">
+        Save Changes
+    </button>
+
+    <button type="reset">
+        Reset
+    </button>
+
+    <a href="/admin/students">
+        Cancel
+    </a>
+
+</form>
+
+</main>
+
+<hr>
+
+<footer>
+
+<p>
+
+    <a href="/admin/students">
+        Back to Student List
+    </a>
+
+</p>
+
+</footer>
+
+</body>
+</html>
+

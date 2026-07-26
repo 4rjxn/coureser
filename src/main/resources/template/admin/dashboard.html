@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administrator Dashboard</title>
+</head>
+<body>
+
+<header>
+    <h1>Course Management System</h1>
+    <p>Administrator Dashboard</p>
+    <hr>
+</header>
+
+<nav>
+    <ul>
+        <li><a href="/admin/dashboard">Dashboard</a></li>
+        <li><a href="/admin/students">Students</a></li>
+        <li><a href="/admin/teachers">Teachers</a></li>
+        <li><a href="/admin/courses">Courses</a></li>
+        <li><a href="/admin/registrations">Registrations</a></li>
+        <li><a href="/logout">Logout</a></li>
+    </ul>
+</nav>
+
+<hr>
+
+<main>
+
+<section>
+
+    <h2>Welcome</h2>
+
+    <p>
+        Welcome, {{adminName}}.
+    </p>
+
+    <p>
+        Use the links below to manage the system.
+    </p>
+
+</section>
+
+<hr>
+
+<section>
+
+    <h2>Management</h2>
+
+    <article>
+
+        <h3>Students</h3>
+
+        <p>
+            Search, add, edit, remove and view student information.
+        </p>
+
+        <p>
+            <a href="/admin/students">Manage Students</a>
+        </p>
+
+    </article>
+
+    <hr>
+
+    <article>
+
+        <h3>Teachers</h3>
+
+        <p>
+            Search, add, edit and manage teacher accounts.
+        </p>
+
+        <p>
+            <a href="/admin/teachers">Manage Teachers</a>
+        </p>
+
+    </article>
+
+    <hr>
+
+    <article>
+
+        <h3>Courses</h3>
+
+        <p>
+            Create, edit and remove courses.
+        </p>
+
+        <p>
+            <a href="/admin/courses">Manage Courses</a>
+        </p>
+
+    </article>
+
+    <hr>
+
+    <article>
+
+        <h3>Registrations</h3>
+
+        <p>
+            Register students for courses and manage registrations.
+        </p>
+
+        <p>
+            <a href="/admin/registrations">Manage Registrations</a>
+        </p>
+
+    </article>
+
+</section>
+
+<hr>
+
+<section>
+
+    <h2>System Summary</h2>
+
+    <table border="1">
+
+        <thead>
+            <tr>
+                <th>Category</th>
+                <th>Total</th>
+            </tr>
+        </thead>
+
+        <tbody>
+
+            <tr>
+                <td>Students</td>
+                <td>{{studentCount}}</td>
+            </tr>
+
+            <tr>
+                <td>Courses</td>
+                <td>{{courseCount}}</td>
+            </tr>
+
+            <tr>
+                <td>Registrations</td>
+                <td>{{registrationCount}}</td>
+            </tr>
+
+        </tbody>
+
+    </table>
+
+</section>
+
+</main>
+
+<hr>
+
+<footer>
+
+<p>
+    Logged in as Administrator
+</p>
+
+</footer>
+
+</body>
+</html>
+
