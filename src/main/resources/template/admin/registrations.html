@@ -34,28 +34,72 @@
 
 <section>
 
-    <h2>Register Student</h2>
+    <h2>Select Student</h2>
+
+    <form action="/admin/registrations/add" method="get">
+
+        <label for="query">
+            Student Name or Student ID
+        </label>
+
+        <br>
+
+        <input
+            type="search"
+            id="query"
+            name="query"
+            value="{{query}}"
+            placeholder="Search students">
+
+        <button type="submit">
+            Search
+        </button>
+
+    </form>
+
+    <br>
+
+    <table border="1">
+
+        <thead>
+
+            <tr>
+                <th>Student ID</th>
+                <th>Name</th>
+                <th>Action</th>
+            </tr>
+
+        </thead>
+
+        <tbody>
+
+            {{studentRows}}
+
+        </tbody>
+
+    </table>
+
+</section>
+
+<hr>
+
+<section>
+
+    <h2>Register Selected Student</h2>
+
+    <p>
+
+        Selected Student:
+        <strong>{{selectedStudent}}</strong>
+
+    </p>
 
     <form action="/admin/registrations/add" method="post">
 
-        <p>
-
-            <label for="studentId">
-                Student
-            </label>
-
-            <br>
-
-            <select
-                id="studentId"
-                name="studentId"
-                required>
-
-                {{studentOptions}}
-
-            </select>
-
-        </p>
+        <input
+            type="hidden"
+            name="studentId"
+            value="{{studentId}}">
 
         <p>
 
@@ -88,19 +132,20 @@
 
 <section>
 
-    <h2>Search Registrations</h2>
+    <h2>Current Registrations</h2>
 
-    <form action="/admin/registrations/search" method="get">
+    <form action="/admin/registrations" method="get">
 
-        <label for="query">
-            Student ID, Name or Course
+        <label for="registrationQuery">
+            Search Registrations
         </label>
 
         <input
             type="search"
-            id="query"
-            name="query"
-            placeholder="Search...">
+            id="registrationQuery"
+            name="registrationQuery"
+            value="{{registrationQuery}}"
+            placeholder="Student, Course...">
 
         <button type="submit">
             Search
@@ -108,13 +153,7 @@
 
     </form>
 
-</section>
-
-<hr>
-
-<section>
-
-    <h2>Current Registrations</h2>
+    <br>
 
     <table border="1">
 
@@ -144,8 +183,6 @@
 <hr>
 
 <section>
-
-    <h2>Pages</h2>
 
     <p>
 

@@ -29,6 +29,7 @@ public class SummaryService {
                 m.put("courseCount", String.valueOf(courses));
                 m.put("registrationCount", String.valueOf(registrations));
             }
+            stmt.close();
 
         } catch (Exception e) {
             System.out.println(e);

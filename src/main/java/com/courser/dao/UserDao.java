@@ -7,6 +7,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.print.DocFlavor.STRING;
+import javax.xml.crypto.Data;
+
 import com.courser.model.Student;
 import com.courser.model.User;
 import com.courser.utils.Database;
@@ -34,9 +37,9 @@ public class UserDao {
                 throw new SQLException("Failed to get user id.");
             }
             int userId = rs.getInt(1);
-            rs.close();
-            PreparedStatement studentStmt = conn.prepareStatement(studentAddSql);
+            userStmt.close();
 
+            PreparedStatement studentStmt = conn.prepareStatement(studentAddSql);
             studentStmt.setInt(1, userId);
             studentStmt.setString(2, student.getStudentId());
             studentStmt.setInt(3, student.getMaxCredits());
@@ -53,9 +56,48 @@ public class UserDao {
         }
     }
 
-    boolean udateUesr(User user) {
-        // TODO: update user in database
-        throw new UnsupportedOperationException("Not implemented yet.");
+    public static void updateStudent(Student student) throws SQLException {
+        String userSql = """
+                UPDATE users
+                SET
+                    username = ?,
+                    name = ?,
+                    email = ?
+                WHERE user_id = ?;
+                """;
+        String studentSql = """
+                UPDATE students
+                SET
+                    student_id = ?,
+                    max_credits = ?
+                WHERE user_id = ?;
+                """;
+        try (Connection conn = Database.getConnection()) {
+            conn.setAutoCommit(false);
+            try (
+                    PreparedStatement userStmt = conn.prepareStatement(userSql);
+                    PreparedStatement studentStmt = conn.prepareStatement(studentSql)) {
+
+                userStmt.setString(1, student.getUserName());
+                userStmt.setString(2, student.getName());
+                userStmt.setString(3, student.getEmail());
+                userStmt.setInt(4, student.getUserId());
+
+                userStmt.executeUpdate();
+
+                studentStmt.setString(1, student.getStudentId());
+                studentStmt.setInt(2, student.getMaxCredits());
+                studentStmt.setInt(3, student.getUserId());
+
+                studentStmt.executeUpdate();
+
+                conn.commit();
+
+            } catch (SQLException e) {
+                conn.rollback();
+                throw e;
+            }
+        }
     }
 
     boolean removeUser(User user) {
@@ -89,7 +131,38 @@ public class UserDao {
                         rs.getString("email"), Integer.valueOf(rs.getString("max_credits")), null);
                 students.add(student);
             }
+            stmt.close();
             return students.toArray(new Student[0]);
+
+        } catch (Exception e) {
+            System.out.println("Search Exception");
+            throw e;
+        }
+    }
+
+    public static Student getStudentFromUserId(int id) throws SQLException {
+        String sqlQuery = """
+                SELECT u.user_id, u.username, u.name, u.email,s.student_id,s.max_credits
+                FROM users u
+                JOIN students s
+                    ON u.user_id = s.user_id
+                WHERE u.user_id = ?;
+                """;
+        Connection conn = Database.getConnection();
+        try {
+            PreparedStatement stmt = conn.prepareStatement(sqlQuery);
+            stmt.setString(1, String.valueOf(id));
+            ResultSet rs = stmt.executeQuery();
+            Student student;
+            if (rs.next()) {
+                student = new Student(rs.getInt("user_id"), rs.getString("username"),
+                        rs.getString("student_id"), rs.getString("name"),
+                        rs.getString("email"), Integer.valueOf(rs.getString("max_credits")), null);
+            } else {
+                return null;
+            }
+            stmt.close();
+            return student;
 
         } catch (Exception e) {
             System.out.println("Search Exception");

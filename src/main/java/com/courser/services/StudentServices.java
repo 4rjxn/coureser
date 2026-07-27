@@ -1,5 +1,7 @@
 package com.courser.services;
 
+import java.sql.SQLException;
+
 import com.courser.dao.UserDao;
 import com.courser.model.Student;
 
@@ -18,6 +20,23 @@ public class StudentServices {
             return UserDao.searchStudent(query, limit, offset);
         } catch (Exception e) {
             return null;
+        }
+    }
+
+    public static Student getStudentFormUserId(int id) {
+        try {
+            return UserDao.getStudentFromUserId(id);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public static void editStudentDetails(Student student) {
+        try {
+            UserDao.updateStudent(student);
+        } catch (Exception e) {
+            System.out.println(e);
+
         }
     }
 

@@ -23,7 +23,7 @@ public class Server {
         server.createContext("/admin/students/add",
                 exchange -> ServerHandles.handleAdminStudentsAdd(exchange, "template/admin/student-add.html"));
         server.createContext("/admin/students/edit",
-                exchange -> respond(exchange, "template/admin/student-edit.html", Map.of("H", "H")));
+                exchange -> ServerHandles.handleAdminStudentsEdit(exchange, "template/admin/student-edit.html"));
         server.createContext("/admin/courses",
                 exchange -> respond(exchange, "template/admin/courses.html", Map.of("H", "H")));
         server.createContext("/admin/courses/add",
