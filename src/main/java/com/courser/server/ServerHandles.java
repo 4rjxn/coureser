@@ -4,7 +4,9 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.courser.model.Course;
 import com.courser.model.Student;
+import com.courser.services.CourseServices;
 import com.courser.services.StudentServices;
 import com.courser.services.SummaryService;
 import com.sun.net.httpserver.HttpExchange;
@@ -14,6 +16,45 @@ class ServerHandles {
         Map<String, String> summary = SummaryService.getSummary();
         Server.respond(exchange, path, summary);
 
+    }
+
+    static void handleAdminCourses(HttpExchange exchange, String path) throws IOException {
+        Map<String, String> summary = SummaryService.getSummary();
+        Map<String, String> params = ServerUtils.getOueryParams(exchange);
+        Map<String, String> values = new HashMap<String, String>();
+        int courseCount = Integer.valueOf(summary.get("courseCount"));
+        final int limit = 10;
+        int totalPages = (int) Math.ceil((double) courseCount / limit);
+        String query = ServerUtils.getStringParam(params, "query", "");
+        int page = ServerUtils.getIntParam(params, "page", 1);
+        int offset = (page - 1) * limit;
+        Course[] courses = CourseServices.searchCourses(query, limit, offset);
+        String rows = "";
+        for (Course c : courses) {
+            rows += """
+                    <tr>
+                        <td>%s</td>
+                        <td>%s</td>
+                        <td>%d</td>
+                        <td>%s</td>
+                        <td>
+                            <a href="/admin/courses/edit?courseCode=%s">Edit</a>
+                        </td>
+                    </tr>
+                            """.formatted(c.getCourseCode(),
+                    c.getTitle(),
+                    c.getCredits(),
+                    c.getInstructorName(),
+                    c.getCourseCode());
+        }
+        values.putAll(Map.of(
+                "courseRows", rows,
+                "previousPage", "/admin/courses?page=" + (page - 1),
+                "currentPage", String.valueOf(page),
+                "totalPages", String.valueOf(totalPages),
+                "nextPage", "/admin/courses?page=" + (page + 1),
+                "courseCount", String.valueOf(courseCount)));
+        Server.respond(exchange, path, values);
     }
 
     static void handleAdminStudentsEdit(HttpExchange exchange, String path) throws IOException {

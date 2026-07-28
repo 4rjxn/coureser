@@ -7,9 +7,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.print.DocFlavor.STRING;
-import javax.xml.crypto.Data;
-
 import com.courser.model.Student;
 import com.courser.model.User;
 import com.courser.utils.Database;
@@ -96,6 +93,8 @@ public class UserDao {
             } catch (SQLException e) {
                 conn.rollback();
                 throw e;
+            } finally {
+                conn.setAutoCommit(true);
             }
         }
     }

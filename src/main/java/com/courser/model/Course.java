@@ -5,10 +5,10 @@ public class Course {
     private String title;
     private int credits;
     private String instructorName;
-    private int[] prerequisiteCourses;
+    private String[] prerequisiteCourses;
 
     public Course(String courseCode, String title, int credits, String instructorName,
-            int[] prerequisiteCourses) {
+            String[] prerequisiteCourses) {
         this.courseCode = courseCode;
         this.title = title;
         this.credits = credits;
@@ -32,7 +32,7 @@ public class Course {
         return instructorName;
     }
 
-    public int[] getPrerequisiteCourses() {
+    public String[] getPrerequisiteCourses() {
         return prerequisiteCourses;
     }
 

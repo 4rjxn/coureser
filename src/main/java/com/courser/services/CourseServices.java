@@ -8,15 +8,24 @@ public class CourseServices {
         // validate the course
         // TODO: course validatin
         // then call
-        CourseDao.addNew(course);
+        try {
+            CourseDao.addNew(course);
+        } catch (Exception e) {
+            System.out.println(e);
+
+        }
 
     }
 
-    public static Course[] getCourses(int limit, int offset) {
-        return CourseDao.getCourses(limit, offset);
+    public static Course[] searchCourses(String query, int limit, int offset) {
+        return CourseDao.searchCourse(query, limit, offset);
     }
 
     public static void updateCourse(Course course, String course_code) {
-        CourseDao.updateCourse(course, course_code);
+        try {
+            CourseDao.updateCourse(course, course_code);
+        } catch (Exception e) {
+            System.out.println(e);
+        }
     }
 }
