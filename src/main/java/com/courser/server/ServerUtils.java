@@ -43,7 +43,8 @@ public class ServerUtils {
         }
 
         for (String pair : body.split("&")) {
-            if (pair.isBlank()) continue;
+            if (pair.isBlank())
+                continue;
             String[] kv = pair.split("=", 2);
             String key = URLDecoder.decode(kv[0], StandardCharsets.UTF_8);
             String value = kv.length > 1
@@ -67,7 +68,8 @@ public class ServerUtils {
         }
 
         for (String pair : body.split("&")) {
-            if (pair.isBlank()) continue;
+            if (pair.isBlank())
+                continue;
             String[] kv = pair.split("=", 2);
             String key = URLDecoder.decode(kv[0], StandardCharsets.UTF_8);
             String value = kv.length > 1
@@ -91,8 +93,37 @@ public class ServerUtils {
         }
     }
 
+    public static int getFirstIntParam(Map<String, List<String>> params, String key, int defaultValue) {
+        List<String> values = params.get(key);
+        if (values == null || values.isEmpty())
+            return defaultValue;
+        String value = values.getFirst();
+        if (value == null || value.isBlank()) {
+            return defaultValue;
+        }
+        try {
+            return Integer.parseInt(value.trim());
+        } catch (NumberFormatException e) {
+            return defaultValue;
+        }
+    }
+
     public static String getStringParam(Map<String, String> params, String key, String defaultValue) {
         String value = params.get(key);
+        if (value == null || value.isBlank()) {
+            return defaultValue;
+        }
+        return value.trim();
+    }
+
+    public static String getFirstStringParam(Map<String, List<String>> params, String key, String defaultValue) {
+        List<String> values = params.get(key);
+
+        if (values == null || values.isEmpty()) {
+            return defaultValue;
+        }
+
+        String value = params.get(key).getFirst();
         if (value == null || value.isBlank()) {
             return defaultValue;
         }

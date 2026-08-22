@@ -34,7 +34,8 @@ class ServerHandles {
 
         String query = ServerUtils.getStringParam(params, "query", "");
         int page = ServerUtils.getIntParam(params, "page", 1);
-        if (page < 1) page = 1;
+        if (page < 1)
+            page = 1;
         final int limit = 10;
         int offset = (page - 1) * limit;
 
@@ -45,30 +46,31 @@ class ServerHandles {
         StringBuilder rows = new StringBuilder();
         if (students != null) {
             for (Student s : students) {
-                rows.append("""
-                        <tr>
-                            <td>%s</td>
-                            <td>%s</td>
-                            <td>%s</td>
-                            <td>%s</td>
-                            <td>%d</td>
-                            <td>
-                                <a href="/admin/students/edit?userId=%d">Edit</a> |
-                                <a href="/admin/registrations?studentId=%s">Register</a> |
-                                <a href="/admin/students/delete?userId=%d" onclick="return confirm('Are you sure you want to delete student %s?')">Delete</a>
-                            </td>
-                        </tr>
-                        """.formatted(
-                        escapeHtml(s.getStudentId()),
-                        escapeHtml(s.getName()),
-                        escapeHtml(s.getUserName()),
-                        escapeHtml(s.getEmail()),
-                        s.getMaxCredits(),
-                        s.getUserId(),
-                        escapeHtml(s.getStudentId()),
-                        s.getUserId(),
-                        escapeHtml(s.getStudentId())
-                ));
+                rows.append(
+                        """
+                                <tr>
+                                    <td>%s</td>
+                                    <td>%s</td>
+                                    <td>%s</td>
+                                    <td>%s</td>
+                                    <td>%d</td>
+                                    <td>
+                                        <a href="/admin/students/edit?userId=%d">Edit</a> |
+                                        <a href="/admin/registrations?studentId=%s">Register</a> |
+                                        <a href="/admin/students/delete?userId=%d" onclick="return confirm('Are you sure you want to delete student %s?')">Delete</a>
+                                    </td>
+                                </tr>
+                                """
+                                .formatted(
+                                        escapeHtml(s.getStudentId()),
+                                        escapeHtml(s.getName()),
+                                        escapeHtml(s.getUserName()),
+                                        escapeHtml(s.getEmail()),
+                                        s.getMaxCredits(),
+                                        s.getUserId(),
+                                        escapeHtml(s.getStudentId()),
+                                        s.getUserId(),
+                                        escapeHtml(s.getStudentId())));
             }
         }
 
@@ -131,8 +133,7 @@ class ServerHandles {
                         "name", escapeHtml(student.getName()),
                         "email", escapeHtml(student.getEmail()),
                         "studentId", escapeHtml(student.getStudentId()),
-                        "maxCredits", String.valueOf(student.getMaxCredits())
-                );
+                        "maxCredits", String.valueOf(student.getMaxCredits()));
                 Server.respond(exchange, path, values);
             } else {
                 Server.redirect(exchange, "/admin/students");
@@ -179,7 +180,8 @@ class ServerHandles {
 
         String query = ServerUtils.getStringParam(params, "query", "");
         int page = ServerUtils.getIntParam(params, "page", 1);
-        if (page < 1) page = 1;
+        if (page < 1)
+            page = 1;
         final int limit = 10;
         int offset = (page - 1) * limit;
 
@@ -192,28 +194,29 @@ class ServerHandles {
             for (Course c : courses) {
                 String[] prereqs = c.getPrerequisiteCourses();
                 String prereqStr = (prereqs != null && prereqs.length > 0) ? String.join(", ", prereqs) : "None";
-                rows.append("""
-                        <tr>
-                            <td>%s</td>
-                            <td>%s</td>
-                            <td>%d</td>
-                            <td>%s</td>
-                            <td>%s</td>
-                            <td>
-                                <a href="/admin/courses/edit?courseCode=%s">Edit</a> |
-                                <a href="/admin/courses/delete?courseCode=%s" onclick="return confirm('Are you sure you want to delete course %s?')">Delete</a>
-                            </td>
-                        </tr>
-                        """.formatted(
-                        escapeHtml(c.getCourseCode()),
-                        escapeHtml(c.getTitle()),
-                        c.getCredits(),
-                        escapeHtml(c.getInstructorName()),
-                        escapeHtml(prereqStr),
-                        urlEncode(c.getCourseCode()),
-                        urlEncode(c.getCourseCode()),
-                        escapeHtml(c.getCourseCode())
-                ));
+                rows.append(
+                        """
+                                <tr>
+                                    <td>%s</td>
+                                    <td>%s</td>
+                                    <td>%d</td>
+                                    <td>%s</td>
+                                    <td>%s</td>
+                                    <td>
+                                        <a href="/admin/courses/edit?courseCode=%s">Edit</a> |
+                                        <a href="/admin/courses/delete?courseCode=%s" onclick="return confirm('Are you sure you want to delete course %s?')">Delete</a>
+                                    </td>
+                                </tr>
+                                """
+                                .formatted(
+                                        escapeHtml(c.getCourseCode()),
+                                        escapeHtml(c.getTitle()),
+                                        c.getCredits(),
+                                        escapeHtml(c.getInstructorName()),
+                                        escapeHtml(prereqStr),
+                                        urlEncode(c.getCourseCode()),
+                                        urlEncode(c.getCourseCode()),
+                                        escapeHtml(c.getCourseCode())));
             }
         }
 
@@ -234,7 +237,8 @@ class ServerHandles {
             StringBuilder prereqOpts = new StringBuilder();
             for (Course c : allCourses) {
                 prereqOpts.append("<option value=\"%s\">%s - %s</option>\n"
-                        .formatted(escapeHtml(c.getCourseCode()), escapeHtml(c.getCourseCode()), escapeHtml(c.getTitle())));
+                        .formatted(escapeHtml(c.getCourseCode()), escapeHtml(c.getCourseCode()),
+                                escapeHtml(c.getTitle())));
             }
 
             StringBuilder teacherOpts = new StringBuilder();
@@ -246,21 +250,19 @@ class ServerHandles {
 
             Map<String, String> values = Map.of(
                     "prerequisiteOptions", prereqOpts.toString(),
-                    "teacherOptions", teacherOpts.toString()
-            );
+                    "teacherOptions", teacherOpts.toString());
             Server.respond(exchange, path, values);
             return;
         }
 
         if ("POST".equalsIgnoreCase(exchange.getRequestMethod())) {
             Map<String, List<String>> formMulti = ServerUtils.getFormDataMulti(exchange);
-            Map<String, String> form = ServerUtils.getFormData(exchange);
 
-            String code = ServerUtils.getStringParam(form, "code", "");
-            String title = ServerUtils.getStringParam(form, "title", "");
-            int credits = ServerUtils.getIntParam(form, "credits", 3);
-            int capacity = ServerUtils.getIntParam(form, "maxEnrollment", 30);
-            String teacherId = ServerUtils.getStringParam(form, "teacherId", "Staff");
+            String code = ServerUtils.getFirstStringParam(formMulti, "code", "");
+            String title = ServerUtils.getFirstStringParam(formMulti, "title", "");
+            int credits = ServerUtils.getFirstIntParam(formMulti, "credits", 3);
+            int capacity = ServerUtils.getFirstIntParam(formMulti, "maxEnrollment", 30);
+            String teacherId = ServerUtils.getFirstStringParam(formMulti, "teacherId", "Staff");
             List<String> prereqs = formMulti.get("prerequisites");
 
             if (!code.isBlank() && !title.isBlank()) {
@@ -293,8 +295,7 @@ class ServerHandles {
                             escapeHtml(c.getCourseCode()),
                             isSelected ? "selected" : "",
                             escapeHtml(c.getCourseCode()),
-                            escapeHtml(c.getTitle())
-                    ));
+                            escapeHtml(c.getTitle())));
                 }
             }
 
@@ -317,22 +318,20 @@ class ServerHandles {
                     "credits", String.valueOf(course.getCredits()),
                     "maxEnrollment", String.valueOf(course.getCapacity()),
                     "teacherOptions", teacherOpts.toString(),
-                    "prerequisiteOptions", prereqOpts.toString()
-            );
+                    "prerequisiteOptions", prereqOpts.toString());
             Server.respond(exchange, path, values);
             return;
         }
 
         if ("POST".equalsIgnoreCase(exchange.getRequestMethod())) {
             Map<String, List<String>> formMulti = ServerUtils.getFormDataMulti(exchange);
-            Map<String, String> form = ServerUtils.getFormData(exchange);
 
-            String courseId = ServerUtils.getStringParam(form, "courseId", "");
-            String code = ServerUtils.getStringParam(form, "code", "");
-            String title = ServerUtils.getStringParam(form, "title", "");
-            int credits = ServerUtils.getIntParam(form, "credits", 3);
-            int capacity = ServerUtils.getIntParam(form, "maxEnrollment", 30);
-            String teacherId = ServerUtils.getStringParam(form, "teacherId", "Staff");
+            String courseId = ServerUtils.getFirstStringParam(formMulti, "courseId", "");
+            String code = ServerUtils.getFirstStringParam(formMulti, "code", "");
+            String title = ServerUtils.getFirstStringParam(formMulti, "title", "");
+            int credits = ServerUtils.getFirstIntParam(formMulti, "credits", 3);
+            int capacity = ServerUtils.getFirstIntParam(formMulti, "maxEnrollment", 30);
+            String teacherId = ServerUtils.getFirstStringParam(formMulti, "teacherId", "Staff");
             List<String> prereqs = formMulti.get("prerequisites");
 
             Course course = new Course(code, title, credits, teacherId, prereqs, capacity);
@@ -363,7 +362,8 @@ class ServerHandles {
         String regQuery = ServerUtils.getStringParam(params, "registrationQuery", "");
         String selectedStudentId = ServerUtils.getStringParam(params, "studentId", "");
         int page = ServerUtils.getIntParam(params, "page", 1);
-        if (page < 1) page = 1;
+        if (page < 1)
+            page = 1;
         final int limit = 10;
         int offset = (page - 1) * limit;
 
@@ -382,8 +382,7 @@ class ServerHandles {
                         escapeHtml(s.getStudentId()),
                         escapeHtml(s.getName()),
                         urlEncode(s.getStudentId()),
-                        urlEncode(studentQuery)
-                ));
+                        urlEncode(studentQuery)));
             }
         }
 
@@ -398,14 +397,14 @@ class ServerHandles {
                         selectedStudent.getStudentId(),
                         selectedStudent.getRegisteredCredits(),
                         selectedStudent.getMaxCredits(),
-                        selectedStudent.getRemainingCredits()
-                );
+                        selectedStudent.getRemainingCredits());
 
                 List<Course> allCourses = CourseServices.getAllCourses();
                 for (Course c : allCourses) {
                     boolean isRegistered = selectedStudent.isRegisteredFor(c.getCourseCode());
                     boolean hasPrereqs = selectedStudent.hasCompletedPrerequisites(c);
-                    boolean hasCredits = (selectedStudent.getRegisteredCredits() + c.getCredits() <= selectedStudent.getMaxCredits());
+                    boolean hasCredits = (selectedStudent.getRegisteredCredits() + c.getCredits() <= selectedStudent
+                            .getMaxCredits());
                     boolean isFull = c.isFull();
 
                     String statusNote = "";
@@ -414,7 +413,8 @@ class ServerHandles {
                     } else if (isFull) {
                         statusNote = " [FULL: %d/%d]".formatted(c.getEnrolledCount(), c.getCapacity());
                     } else if (!hasPrereqs) {
-                        statusNote = " [Missing Prereqs: %s]".formatted(String.join(", ", selectedStudent.getMissingPrerequisites(c)));
+                        statusNote = " [Missing Prereqs: %s]"
+                                .formatted(String.join(", ", selectedStudent.getMissingPrerequisites(c)));
                     } else if (!hasCredits) {
                         statusNote = " [Exceeds Credit Limit: +%d cr]".formatted(c.getCredits());
                     } else {
@@ -427,8 +427,7 @@ class ServerHandles {
                             escapeHtml(c.getCourseCode()),
                             escapeHtml(c.getTitle()),
                             c.getCredits(),
-                            escapeHtml(statusNote)
-                    ));
+                            escapeHtml(statusNote)));
                 }
             }
         }
@@ -441,28 +440,29 @@ class ServerHandles {
         StringBuilder regRows = new StringBuilder();
         if (registrations != null) {
             for (Registration r : registrations) {
-                regRows.append("""
-                        <tr>
-                            <td>%s</td>
-                            <td>%s</td>
-                            <td>%s</td>
-                            <td>%s</td>
-                            <td>%d</td>
-                            <td>
-                                <a href="/admin/registrations/drop?studentId=%s&courseCode=%s" onclick="return confirm('Are you sure you want to drop course %s for student %s?')">Drop</a>
-                            </td>
-                        </tr>
-                        """.formatted(
-                        escapeHtml(r.getStudent().getStudentId()),
-                        escapeHtml(r.getStudent().getName()),
-                        escapeHtml(r.getCourse().getCourseCode()),
-                        escapeHtml(r.getCourse().getTitle()),
-                        r.getCourse().getCredits(),
-                        urlEncode(r.getStudent().getStudentId()),
-                        urlEncode(r.getCourse().getCourseCode()),
-                        escapeHtml(r.getCourse().getCourseCode()),
-                        escapeHtml(r.getStudent().getStudentId())
-                ));
+                regRows.append(
+                        """
+                                <tr>
+                                    <td>%s</td>
+                                    <td>%s</td>
+                                    <td>%s</td>
+                                    <td>%s</td>
+                                    <td>%d</td>
+                                    <td>
+                                        <a href="/admin/registrations/drop?studentId=%s&courseCode=%s" onclick="return confirm('Are you sure you want to drop course %s for student %s?')">Drop</a>
+                                    </td>
+                                </tr>
+                                """
+                                .formatted(
+                                        escapeHtml(r.getStudent().getStudentId()),
+                                        escapeHtml(r.getStudent().getName()),
+                                        escapeHtml(r.getCourse().getCourseCode()),
+                                        escapeHtml(r.getCourse().getTitle()),
+                                        r.getCourse().getCredits(),
+                                        urlEncode(r.getStudent().getStudentId()),
+                                        urlEncode(r.getCourse().getCourseCode()),
+                                        escapeHtml(r.getCourse().getCourseCode()),
+                                        escapeHtml(r.getStudent().getStudentId())));
             }
         }
 
@@ -473,10 +473,12 @@ class ServerHandles {
         values.put("courseOptions", courseOptions.toString());
         values.put("registrationQuery", escapeHtml(regQuery));
         values.put("registrationRows", regRows.toString());
-        values.put("previousPage", "/admin/registrations?studentId=" + urlEncode(selectedStudentId) + "&registrationQuery=" + urlEncode(regQuery) + "&page=" + Math.max(1, page - 1));
+        values.put("previousPage", "/admin/registrations?studentId=" + urlEncode(selectedStudentId)
+                + "&registrationQuery=" + urlEncode(regQuery) + "&page=" + Math.max(1, page - 1));
         values.put("currentPage", String.valueOf(page));
         values.put("totalPages", String.valueOf(totalPages));
-        values.put("nextPage", "/admin/registrations?studentId=" + urlEncode(selectedStudentId) + "&registrationQuery=" + urlEncode(regQuery) + "&page=" + Math.min(totalPages, page + 1));
+        values.put("nextPage", "/admin/registrations?studentId=" + urlEncode(selectedStudentId) + "&registrationQuery="
+                + urlEncode(regQuery) + "&page=" + Math.min(totalPages, page + 1));
         values.put("registrationCount", String.valueOf(totalRegCount));
 
         Server.respond(exchange, path, values);
@@ -524,7 +526,8 @@ class ServerHandles {
     // Utilities
     // ==========================================
     private static String escapeHtml(String input) {
-        if (input == null) return "";
+        if (input == null)
+            return "";
         return input.replace("&", "&amp;")
                 .replace("<", "&lt;")
                 .replace(">", "&gt;")
@@ -533,7 +536,8 @@ class ServerHandles {
     }
 
     private static String urlEncode(String input) {
-        if (input == null) return "";
+        if (input == null)
+            return "";
         return java.net.URLEncoder.encode(input, java.nio.charset.StandardCharsets.UTF_8);
     }
 }

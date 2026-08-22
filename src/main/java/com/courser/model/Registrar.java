@@ -1,7 +1,6 @@
 package com.courser.model;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import com.courser.exception.CourseFullException;
@@ -110,7 +109,8 @@ public class Registrar extends User {
     // ==========================================
 
     /**
-     * Register a student for a course, enforcing prerequisite, credit-limit, and capacity rules.
+     * Register a student for a course, enforcing prerequisite, credit-limit, and
+     * capacity rules.
      */
     public Registration registerStudentForCourse(Student student, Course course) throws RegistrationException {
         if (student == null) {
@@ -165,7 +165,8 @@ public class Registrar extends User {
      * Drop a course for a student.
      */
     public boolean dropStudentFromCourse(Student student, Course course) {
-        if (student == null || course == null) return false;
+        if (student == null || course == null)
+            return false;
         boolean droppedStudent = student.dropCourse(course);
         if (droppedStudent) {
             course.drop();

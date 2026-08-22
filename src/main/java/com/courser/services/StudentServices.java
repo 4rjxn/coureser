@@ -1,7 +1,6 @@
 package com.courser.services;
 
 import java.sql.SQLException;
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 

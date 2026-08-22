@@ -113,7 +113,8 @@ public class CourseDao {
         String preReqSql = "INSERT OR IGNORE INTO course_prereq(course_code, prerequisite_id) VALUES(?, ?);";
 
         String targetCode = (originalCourseCode != null && !originalCourseCode.isBlank())
-                ? originalCourseCode : course.getCourseCode();
+                ? originalCourseCode
+                : course.getCourseCode();
 
         try (Connection conn = Database.getConnection()) {
             conn.setAutoCommit(false);
@@ -165,7 +166,7 @@ public class CourseDao {
                 LIMIT ? OFFSET ?;
                 """;
         try (Connection conn = Database.getConnection();
-             PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
+                PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
             String pattern = "%" + (query != null ? query.trim() : "") + "%";
             preparedStatement.setString(1, pattern);
             preparedStatement.setString(2, pattern);
@@ -177,7 +178,8 @@ public class CourseDao {
                 while (result.next()) {
                     String code = result.getString("course_code");
                     int capacity = result.getInt("capacity");
-                    if (capacity <= 0) capacity = 30;
+                    if (capacity <= 0)
+                        capacity = 30;
                     List<String> prereqs = getPrerequisites(code);
                     int enrolled = getEnrolledCount(code);
 
@@ -209,7 +211,7 @@ public class CourseDao {
                 """;
         List<Course> courses = new ArrayList<>();
         try (Connection conn = Database.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
             String pattern = "%" + (query != null ? query.trim() : "") + "%";
             stmt.setString(1, pattern);
             stmt.setString(2, pattern);
@@ -218,7 +220,8 @@ public class CourseDao {
                 while (rs.next()) {
                     String code = rs.getString("course_code");
                     int capacity = rs.getInt("capacity");
-                    if (capacity <= 0) capacity = 30;
+                    if (capacity <= 0)
+                        capacity = 30;
                     List<String> prereqs = getPrerequisites(code);
                     int enrolled = getEnrolledCount(code);
 
@@ -240,16 +243,18 @@ public class CourseDao {
     }
 
     public static Course getCourseByCode(String courseCode) {
-        if (courseCode == null || courseCode.isBlank()) return null;
+        if (courseCode == null || courseCode.isBlank())
+            return null;
         String sql = "SELECT course_code, title, credits, instructor_name, capacity FROM courses WHERE course_code = ?;";
         try (Connection conn = Database.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, courseCode.trim().toUpperCase());
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
                     String code = rs.getString("course_code");
                     int capacity = rs.getInt("capacity");
-                    if (capacity <= 0) capacity = 30;
+                    if (capacity <= 0)
+                        capacity = 30;
                     List<String> prereqs = getPrerequisites(code);
                     int enrolled = getEnrolledCount(code);
 
@@ -271,10 +276,11 @@ public class CourseDao {
 
     public static List<String> getPrerequisites(String courseCode) {
         List<String> prereqs = new ArrayList<>();
-        if (courseCode == null || courseCode.isBlank()) return prereqs;
+        if (courseCode == null || courseCode.isBlank())
+            return prereqs;
         String sql = "SELECT prerequisite_id FROM course_prereq WHERE course_code = ?;";
         try (Connection conn = Database.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, courseCode.trim().toUpperCase());
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
@@ -288,10 +294,11 @@ public class CourseDao {
     }
 
     public static int getEnrolledCount(String courseCode) {
-        if (courseCode == null || courseCode.isBlank()) return 0;
+        if (courseCode == null || courseCode.isBlank())
+            return 0;
         String sql = "SELECT COUNT(*) FROM registrations WHERE course_code = ? AND status = 'ACTIVE';";
         try (Connection conn = Database.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, courseCode.trim().toUpperCase());
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
@@ -301,12 +308,15 @@ public class CourseDao {
         } catch (Exception e) {
             // fallback: check reg_courses
             try (Connection conn = Database.getConnection();
-                 PreparedStatement stmt = conn.prepareStatement("SELECT COUNT(*) FROM reg_courses WHERE course_code = ?;")) {
+                    PreparedStatement stmt = conn
+                            .prepareStatement("SELECT COUNT(*) FROM reg_courses WHERE course_code = ?;")) {
                 stmt.setString(1, courseCode.trim().toUpperCase());
                 try (ResultSet rs = stmt.executeQuery()) {
-                    if (rs.next()) return rs.getInt(1);
+                    if (rs.next())
+                        return rs.getInt(1);
                 }
-            } catch (Exception ignored) {}
+            } catch (Exception ignored) {
+            }
         }
         return 0;
     }
@@ -314,10 +324,12 @@ public class CourseDao {
     public static int getTotalCourseCount() {
         String sql = "SELECT COUNT(*) FROM courses;";
         try (Connection conn = Database.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql);
-             ResultSet rs = stmt.executeQuery()) {
-            if (rs.next()) return rs.getInt(1);
-        } catch (Exception ignored) {}
+                PreparedStatement stmt = conn.prepareStatement(sql);
+                ResultSet rs = stmt.executeQuery()) {
+            if (rs.next())
+                return rs.getInt(1);
+        } catch (Exception ignored) {
+        }
         return 0;
     }
 }

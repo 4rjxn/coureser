@@ -15,8 +15,8 @@ public class Database {
 
     public static void init() {
         try (Connection conn = getConnection();
-             Statement stmt = conn.createStatement()) {
-            
+                Statement stmt = conn.createStatement()) {
+
             stmt.execute("PRAGMA foreign_keys = ON;");
 
             // 1. Users table
@@ -61,7 +61,8 @@ public class Database {
                     );
                     """);
 
-            // Schema migration: Add capacity column to courses if it didn't exist in older versions
+            // Schema migration: Add capacity column to courses if it didn't exist in older
+            // versions
             try {
                 stmt.execute("ALTER TABLE courses ADD COLUMN capacity INTEGER DEFAULT 30;");
             } catch (SQLException ignored) {

@@ -23,8 +23,8 @@ public class SummaryService {
         m.put("registrationCount", "0");
 
         try (Connection conn = Database.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql);
-             ResultSet rs = stmt.executeQuery()) {
+                PreparedStatement stmt = conn.prepareStatement(sql);
+                ResultSet rs = stmt.executeQuery()) {
             if (rs.next()) {
                 int students = rs.getInt("total_students");
                 int courses = rs.getInt("total_courses");

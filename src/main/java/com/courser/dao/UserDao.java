@@ -48,7 +48,7 @@ public class UserDao {
                 }
 
                 try (Statement idStmt = conn.createStatement();
-                     ResultSet rs = idStmt.executeQuery("SELECT last_insert_rowid();")) {
+                        ResultSet rs = idStmt.executeQuery("SELECT last_insert_rowid();")) {
                     if (!rs.next()) {
                         throw new SQLException("Failed to get generated user id.");
                     }
@@ -130,7 +130,8 @@ public class UserDao {
     }
 
     public static boolean removeStudentByStudentId(String studentId) throws SQLException {
-        if (studentId == null || studentId.isBlank()) return false;
+        if (studentId == null || studentId.isBlank())
+            return false;
         String findUserIdSql = "SELECT user_id FROM students WHERE student_id = ?;";
         try (Connection conn = Database.getConnection()) {
             int userId = -1;
@@ -201,7 +202,7 @@ public class UserDao {
                 LIMIT ? OFFSET ?;
                 """;
         try (Connection conn = Database.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sqlQuery)) {
+                PreparedStatement stmt = conn.prepareStatement(sqlQuery)) {
             String pattern = "%" + (query != null ? query.trim() : "") + "%";
             stmt.setString(1, pattern);
             stmt.setString(2, pattern);
@@ -218,8 +219,7 @@ public class UserDao {
                             sId,
                             rs.getString("name"),
                             rs.getString("email"),
-                            rs.getInt("max_credits")
-                    );
+                            rs.getInt("max_credits"));
                     List<Course> regCourses = RegistrationDao.getRegisteredCoursesForStudent(sId);
                     student.setRegisteredCourses(regCourses);
 
@@ -245,7 +245,7 @@ public class UserDao {
                 """;
         List<Student> list = new ArrayList<>();
         try (Connection conn = Database.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sqlQuery)) {
+                PreparedStatement stmt = conn.prepareStatement(sqlQuery)) {
             String pattern = "%" + (query != null ? query.trim() : "") + "%";
             stmt.setString(1, pattern);
             stmt.setString(2, pattern);
@@ -259,8 +259,7 @@ public class UserDao {
                             sId,
                             rs.getString("name"),
                             rs.getString("email"),
-                            rs.getInt("max_credits")
-                    );
+                            rs.getInt("max_credits"));
                     List<Course> regCourses = RegistrationDao.getRegisteredCoursesForStudent(sId);
                     student.setRegisteredCourses(regCourses);
 
@@ -285,7 +284,7 @@ public class UserDao {
                 WHERE u.user_id = ?;
                 """;
         try (Connection conn = Database.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sqlQuery)) {
+                PreparedStatement stmt = conn.prepareStatement(sqlQuery)) {
             stmt.setInt(1, id);
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
@@ -296,8 +295,7 @@ public class UserDao {
                             sId,
                             rs.getString("name"),
                             rs.getString("email"),
-                            rs.getInt("max_credits")
-                    );
+                            rs.getInt("max_credits"));
                     List<Course> regCourses = RegistrationDao.getRegisteredCoursesForStudent(sId);
                     student.setRegisteredCourses(regCourses);
 
@@ -313,7 +311,8 @@ public class UserDao {
     }
 
     public static Student getStudentByStudentId(String studentId) {
-        if (studentId == null || studentId.isBlank()) return null;
+        if (studentId == null || studentId.isBlank())
+            return null;
         String sqlQuery = """
                 SELECT u.user_id, u.username, u.name, u.email, s.student_id, s.max_credits
                 FROM users u
@@ -321,7 +320,7 @@ public class UserDao {
                 WHERE s.student_id = ?;
                 """;
         try (Connection conn = Database.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sqlQuery)) {
+                PreparedStatement stmt = conn.prepareStatement(sqlQuery)) {
             stmt.setString(1, studentId.trim());
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
@@ -332,8 +331,7 @@ public class UserDao {
                             sId,
                             rs.getString("name"),
                             rs.getString("email"),
-                            rs.getInt("max_credits")
-                    );
+                            rs.getInt("max_credits"));
                     List<Course> regCourses = RegistrationDao.getRegisteredCoursesForStudent(sId);
                     student.setRegisteredCourses(regCourses);
 
@@ -351,13 +349,14 @@ public class UserDao {
     }
 
     public static void addCompletedCourse(String studentId, String courseCode) throws SQLException {
-        if (studentId == null || courseCode == null) return;
+        if (studentId == null || courseCode == null)
+            return;
         String sql = """
                 INSERT OR IGNORE INTO completed_courses(student_id, course_code, completion_date)
                 VALUES (?, ?, ?);
                 """;
         try (Connection conn = Database.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, studentId.trim());
             stmt.setString(2, courseCode.trim().toUpperCase());
             stmt.setString(3, LocalDate.now().toString());
@@ -366,10 +365,11 @@ public class UserDao {
     }
 
     public static void removeCompletedCourse(String studentId, String courseCode) throws SQLException {
-        if (studentId == null || courseCode == null) return;
+        if (studentId == null || courseCode == null)
+            return;
         String sql = "DELETE FROM completed_courses WHERE student_id = ? AND course_code = ?;";
         try (Connection conn = Database.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, studentId.trim());
             stmt.setString(2, courseCode.trim().toUpperCase());
             stmt.executeUpdate();
@@ -378,10 +378,11 @@ public class UserDao {
 
     public static Set<String> getCompletedCourseCodes(String studentId) {
         Set<String> set = new HashSet<>();
-        if (studentId == null || studentId.isBlank()) return set;
+        if (studentId == null || studentId.isBlank())
+            return set;
         String sql = "SELECT course_code FROM completed_courses WHERE student_id = ?;";
         try (Connection conn = Database.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, studentId.trim());
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
@@ -395,7 +396,8 @@ public class UserDao {
     }
 
     public static void addRegistrar(Registrar registrar) throws SQLException {
-        if (registrar == null) return;
+        if (registrar == null)
+            return;
         String userAddSql = "INSERT INTO users(username, name, email) VALUES (?, ?, ?);";
         String regAddSql = "INSERT INTO registrars(user_id, registrar_id, department) VALUES (?, ?, ?);";
         try (Connection conn = Database.getConnection()) {
@@ -409,8 +411,9 @@ public class UserDao {
                     userStmt.executeUpdate();
                 }
                 try (Statement idStmt = conn.createStatement();
-                     ResultSet rs = idStmt.executeQuery("SELECT last_insert_rowid();")) {
-                    if (!rs.next()) throw new SQLException("Failed to get registrar user id.");
+                        ResultSet rs = idStmt.executeQuery("SELECT last_insert_rowid();")) {
+                    if (!rs.next())
+                        throw new SQLException("Failed to get registrar user id.");
                     userId = rs.getInt(1);
                     registrar.setUserId(userId);
                 }
@@ -433,10 +436,12 @@ public class UserDao {
     public static int getTotalStudentCount() {
         String sql = "SELECT COUNT(*) FROM students;";
         try (Connection conn = Database.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql);
-             ResultSet rs = stmt.executeQuery()) {
-            if (rs.next()) return rs.getInt(1);
-        } catch (Exception ignored) {}
+                PreparedStatement stmt = conn.prepareStatement(sql);
+                ResultSet rs = stmt.executeQuery()) {
+            if (rs.next())
+                return rs.getInt(1);
+        } catch (Exception ignored) {
+        }
         return 0;
     }
 }

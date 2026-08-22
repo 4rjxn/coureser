@@ -12,7 +12,6 @@ import com.courser.model.Registration;
 import com.courser.model.Student;
 import com.courser.server.Server;
 import com.courser.services.CourseServices;
-import com.courser.services.RegistrationService;
 import com.courser.services.StudentServices;
 import com.courser.utils.Database;
 
@@ -27,7 +26,8 @@ public class App {
             if (args.length > 0) {
                 try {
                     port = Integer.parseInt(args[0]);
-                } catch (NumberFormatException ignored) {}
+                } catch (NumberFormatException ignored) {
+                }
             }
             System.out.println("Starting Course Management System on port " + port + "...");
             System.out.println("Open http://localhost:" + port + "/admin/dashboard in your browser.");
@@ -37,7 +37,8 @@ public class App {
 
     public static void runCli() {
         Scanner scanner = new Scanner(System.in);
-        Registrar registrar = new Registrar(1, "admin", "REG001", "System Registrar", "registrar@university.edu", "Academic Records");
+        Registrar registrar = new Registrar(1, "admin", "REG001", "System Registrar", "registrar@university.edu",
+                "Academic Records");
         boolean isRunning = true;
 
         System.out.println("=================================================");
@@ -107,8 +108,8 @@ public class App {
             int capacity = capInput.isEmpty() ? 30 : Integer.parseInt(capInput);
             System.out.print("Enter prerequisite course codes (comma-separated, or leave blank) > ");
             String prereqInput = scanner.nextLine().trim();
-            List<String> prereqs = prereqInput.isEmpty() ? List.of() :
-                    Arrays.stream(prereqInput.split(",")).map(String::trim).toList();
+            List<String> prereqs = prereqInput.isEmpty() ? List.of()
+                    : Arrays.stream(prereqInput.split(",")).map(String::trim).toList();
 
             Course course = new Course(code, title, credits, instructor, prereqs, capacity);
             registrar.addCourse(course);
@@ -129,7 +130,8 @@ public class App {
             }
             System.out.print("Enter new title [" + existing.getTitle() + "] > ");
             String title = scanner.nextLine().trim();
-            if (title.isEmpty()) title = existing.getTitle();
+            if (title.isEmpty())
+                title = existing.getTitle();
 
             System.out.print("Enter new credits [" + existing.getCredits() + "] > ");
             String creditsInput = scanner.nextLine().trim();
@@ -137,7 +139,8 @@ public class App {
 
             System.out.print("Enter new instructor [" + existing.getInstructorName() + "] > ");
             String instructor = scanner.nextLine().trim();
-            if (instructor.isEmpty()) instructor = existing.getInstructorName();
+            if (instructor.isEmpty())
+                instructor = existing.getInstructorName();
 
             System.out.print("Enter new capacity [" + existing.getCapacity() + "] > ");
             String capInput = scanner.nextLine().trim();
@@ -145,8 +148,8 @@ public class App {
 
             System.out.print("Enter prerequisite codes (comma-separated) > ");
             String prereqInput = scanner.nextLine().trim();
-            List<String> prereqs = prereqInput.isEmpty() ? existing.getPrerequisitesList() :
-                    Arrays.stream(prereqInput.split(",")).map(String::trim).toList();
+            List<String> prereqs = prereqInput.isEmpty() ? existing.getPrerequisitesList()
+                    : Arrays.stream(prereqInput.split(",")).map(String::trim).toList();
 
             Course updated = new Course(originalCode, title, credits, instructor, prereqs, capacity);
             registrar.updateCourse(updated, originalCode);
@@ -248,9 +251,11 @@ public class App {
             }
 
             Registration reg = registrar.registerStudentForCourse(student, course);
-            System.out.println("✓ SUCCESS! Registered " + student.getName() + " for " + course.getCourseCode() + " (" + course.getTitle() + ").");
+            System.out.println("✓ SUCCESS! Registered " + student.getName() + " for " + course.getCourseCode() + " ("
+                    + course.getTitle() + ").");
             System.out.println("  Registration Date: " + reg.getRegistrationDate());
-            System.out.println("  Total Registered Credits: " + student.getRegisteredCredits() + " / " + student.getMaxCredits());
+            System.out.println(
+                    "  Total Registered Credits: " + student.getRegisteredCredits() + " / " + student.getMaxCredits());
         } catch (RegistrationException e) {
             System.out.println("✗ REGISTRATION REJECTED: " + e.getMessage());
         } catch (Exception e) {
@@ -277,7 +282,8 @@ public class App {
         boolean dropped = registrar.dropStudentFromCourse(student, course);
         if (dropped) {
             System.out.println("✓ SUCCESS! Dropped course " + courseCode + " for student " + student.getName() + ".");
-            System.out.println("  Updated Registered Credits: " + student.getRegisteredCredits() + " / " + student.getMaxCredits());
+            System.out.println("  Updated Registered Credits: " + student.getRegisteredCredits() + " / "
+                    + student.getMaxCredits());
         } else {
             System.out.println("✗ Failed to drop course. Student was not registered for this course.");
         }
@@ -292,7 +298,8 @@ public class App {
             return;
         }
         List<Course> courses = registrar.viewStudentCourses(studentId);
-        System.out.println("\n--- Registered Courses for " + student.getName() + " (" + student.getStudentId() + ") ---");
+        System.out
+                .println("\n--- Registered Courses for " + student.getName() + " (" + student.getStudentId() + ") ---");
         System.out.println("Max Allowed Credits: " + student.getMaxCredits());
         System.out.println("Total Registered Credits: " + student.getRegisteredCredits());
         System.out.println("Remaining Credit Capacity: " + student.getRemainingCredits());

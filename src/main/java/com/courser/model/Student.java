@@ -9,8 +9,10 @@ import java.util.Set;
 
 /**
  * Represents a Student in the Course Management System.
- * Inherits user identity from User and encapsulates studentId, maximum credit limits,
- * registered courses, and completed course history for prerequisite verification.
+ * Inherits user identity from User and encapsulates studentId, maximum credit
+ * limits,
+ * registered courses, and completed course history for prerequisite
+ * verification.
  */
 public class Student extends User {
     public static final int DEFAULT_MAX_CREDITS = 20;
@@ -21,7 +23,7 @@ public class Student extends User {
     private final Set<String> completedCourses = new HashSet<>();
 
     public Student(int userId, String userName, String studentId, String name, String email,
-                   int maxCredits, List<Course> registeredCourses) {
+            int maxCredits, List<Course> registeredCourses) {
         super(userId, userName, name, email);
         setStudentId(studentId);
         setMaxCredits(maxCredits);
@@ -31,14 +33,14 @@ public class Student extends User {
     }
 
     public Student(int userId, String userName, String studentId, String name, String email,
-                   int maxCredits, int[] registeredCourses) {
+            int maxCredits, int[] registeredCourses) {
         super(userId, userName, name, email);
         setStudentId(studentId);
         setMaxCredits(maxCredits);
     }
 
     public Student(int userId, String userName, String studentId, String name, String email,
-                   int maxCredits) {
+            int maxCredits) {
         this(userId, userName, studentId, name, email, maxCredits, (List<Course>) null);
     }
 
@@ -93,7 +95,8 @@ public class Student extends User {
     }
 
     public boolean isRegisteredFor(String courseCode) {
-        if (courseCode == null) return false;
+        if (courseCode == null)
+            return false;
         for (Course c : registeredCourses) {
             if (c.getCourseCode().equalsIgnoreCase(courseCode.trim())) {
                 return true;
@@ -123,12 +126,14 @@ public class Student extends User {
     }
 
     public boolean hasCompletedCourse(String courseCode) {
-        if (courseCode == null) return false;
+        if (courseCode == null)
+            return false;
         return completedCourses.contains(courseCode.trim().toUpperCase());
     }
 
     public boolean hasCompletedPrerequisites(Course course) {
-        if (course == null) return false;
+        if (course == null)
+            return false;
         List<String> prereqs = course.getPrerequisitesList();
         if (prereqs == null || prereqs.isEmpty()) {
             return true;
@@ -154,10 +159,14 @@ public class Student extends User {
     }
 
     public boolean canRegister(Course course) {
-        if (course == null) return false;
-        if (isRegisteredFor(course)) return false;
-        if (course.isFull()) return false;
-        if (getRegisteredCredits() + course.getCredits() > maxCredits) return false;
+        if (course == null)
+            return false;
+        if (isRegisteredFor(course))
+            return false;
+        if (course.isFull())
+            return false;
+        if (getRegisteredCredits() + course.getCredits() > maxCredits)
+            return false;
         return hasCompletedPrerequisites(course);
     }
 
@@ -170,19 +179,23 @@ public class Student extends User {
     }
 
     public boolean dropCourse(String courseCode) {
-        if (courseCode == null) return false;
+        if (courseCode == null)
+            return false;
         return registeredCourses.removeIf(c -> c.getCourseCode().equalsIgnoreCase(courseCode.trim()));
     }
 
     public boolean dropCourse(Course course) {
-        if (course == null) return false;
+        if (course == null)
+            return false;
         return dropCourse(course.getCourseCode());
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
         Student student = (Student) o;
         return studentId != null && studentId.equalsIgnoreCase(student.studentId);
     }
