@@ -15,6 +15,9 @@ import com.courser.services.CourseServices;
 import com.courser.services.StudentServices;
 import com.courser.utils.Database;
 
+//this  in the main starting point of the execution.
+//there is both cli and a web based version for this.
+
 public class App {
     public static void main(String[] args) throws IOException {
         Database.init();

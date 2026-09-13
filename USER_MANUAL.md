@@ -35,20 +35,20 @@ target/courser-1.0-SNAPSHOT.jar
 
 The system can be launched in **CLI Interface Mode** or **Embedded Web API Server Mode**.
 
-### 3.1 Running in CLI Mode (Default)
+### 3.1 Running in CLI Mode
 To run the interactive command-line interface:
 ```bash
-java -jar target/courser-1.0-SNAPSHOT.jar
+java -jar target/courser-1.0-SNAPSHOT.jar --cli
 ```
 *or via Maven:*
 ```bash
 mvn exec:java -Dexec.mainClass="com.courser.App"
 ```
 
-### 3.2 Running the HTTP Web Server
+### 3.2 Running the HTTP Web Server (default)
 To launch the REST Web Server backend on port `8080`:
 ```bash
-java -cp target/courser-1.0-SNAPSHOT.jar com.courser.server.Server
+java -jar target/courser-1.0-SNAPSHOT.jar 
 ```
 
 ---
@@ -84,5 +84,5 @@ java -cp target/courser-1.0-SNAPSHOT.jar com.courser.server.Server
 ## 6. Troubleshooting & Diagnostics
 
 - **Database Locks / File Not Found**: The application creates and updates `courser.db` automatically in the root working directory. Ensure write permissions exist.
-- **Port Conflict (Port 8080 in use)**: Verify no other service is occupying port 8080 or kill active process using `fuser -k 8080/tcp`.
+- **Port Conflict (Port 5555 in use)**: Verify no other service is occupying port 5555 or kill active process using `fuser -k 5555/tcp`.
 - **Prerequisite / Credit Errors**: Check exception messages displayed on CLI or HTTP API response status codes.
