@@ -511,6 +511,21 @@ class ServerHandles {
         exchange.sendResponseHeaders(405, -1);
     }
 
+    static void handleAdminRegistrationsAddCompleted(HttpExchange exchange) throws IOException {
+        if ("POST".equalsIgnoreCase(exchange.getRequestMethod())) {
+            Map<String, String> form = ServerUtils.getFormData(exchange);
+            String studentId = ServerUtils.getStringParam(form, "studentId", "");
+            String courseCode = ServerUtils.getStringParam(form, "courseCode", "");
+
+            if (!studentId.isBlank() && !courseCode.isBlank()) {
+                StudentServices.addCompletedCourse(studentId, courseCode);
+            }
+            Server.redirect(exchange, "/admin/registrations?studentId=" + urlEncode(studentId));
+            return;
+        }
+        exchange.sendResponseHeaders(405, -1);
+    }
+
     static void handleAdminRegistrationsDrop(HttpExchange exchange) throws IOException {
         Map<String, String> params = ServerUtils.getQueryParams(exchange);
         String studentId = ServerUtils.getStringParam(params, "studentId", "");

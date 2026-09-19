@@ -75,6 +75,8 @@ public class Server {
                 exchange -> ServerHandles.handleAdminRegistrations(exchange, "template/admin/registrations.html"));
         server.createContext("/admin/registrations/add",
                 exchange -> ServerHandles.handleAdminRegistrationsAdd(exchange, "template/admin/registrations.html"));
+        server.createContext("/admin/registrations/add-completed",
+                exchange -> ServerHandles.handleAdminRegistrationsAddCompleted(exchange));
         server.createContext("/admin/registrations/drop",
                 exchange -> ServerHandles.handleAdminRegistrationsDrop(exchange));
         server.createContext("/admin/registrations/delete",

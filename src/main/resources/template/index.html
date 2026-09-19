@@ -3,109 +3,111 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Course Management System</title>
+    <title>Course Management System - Login</title>
+    <link rel="stylesheet" href="/style.css">
+    <style>
+        /* Embedded CSS to ensure instant modern rendering without external file dependencies */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        
+        :root {
+            --primary: #4f46e5;
+            --primary-hover: #4338ca;
+            --bg-main: #f8fafc;
+            --bg-card: #ffffff;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --radius-md: 10px;
+            --radius-lg: 16px;
+        }
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background-color: var(--bg-main); color: var(--text-main); line-height: 1.6; min-height: 100vh; }
+        hr { display: none; }
+        a { color: var(--primary); text-decoration: none; }
+
+        .login-wrapper { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%); padding: 1.5rem; }
+        .login-card { background: #ffffff; border-radius: var(--radius-lg); box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); width: 100%; max-width: 440px; padding: 2.5rem; }
+        .login-brand { text-align: center; margin-bottom: 2rem; }
+        .brand-icon { width: 52px; height: 52px; background: linear-gradient(135deg, #4f46e5, #818cf8); border-radius: var(--radius-md); display: inline-flex; align-items: center; justify-content: center; color: #fff; font-size: 1.5rem; font-weight: 800; margin-bottom: 1rem; box-shadow: 0 4px 14px rgba(79, 70, 229, 0.4); }
+        .brand-title { font-size: 1.5rem; font-weight: 700; color: #0f172a; letter-spacing: -0.02em; }
+        .brand-subtitle { font-size: 0.875rem; color: var(--text-muted); margin-top: 0.25rem; }
+
+        .form-group { margin-bottom: 1.25rem; }
+        .form-group label { display: block; font-size: 0.875rem; font-weight: 600; color: #334155; margin-bottom: 0.4rem; }
+        .form-control { width: 100%; padding: 0.75rem 1rem; border: 1px solid var(--border-color); border-radius: var(--radius-md); font-size: 0.95rem; font-family: inherit; transition: all 0.2s; outline: none; }
+        .form-control:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15); }
+
+        .btn-submit { width: 100%; padding: 0.8rem 1.5rem; background-color: var(--primary); color: #ffffff; border: none; border-radius: var(--radius-md); font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3); margin-top: 0.5rem; }
+        .btn-submit:hover { background-color: var(--primary-hover); transform: translateY(-1px); }
+
+        .info-box { background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: var(--radius-md); padding: 1.25rem; margin-top: 2rem; font-size: 0.875rem; color: var(--text-muted); }
+        .info-box h3 { font-size: 0.95rem; color: #1e293b; margin-bottom: 0.5rem; font-weight: 600; }
+        
+        .quick-links { display: flex; justify-content: center; gap: 1.5rem; margin-top: 1.5rem; font-size: 0.875rem; }
+        .quick-links a { color: #64748b; font-weight: 500; transition: color 0.2s; }
+        .quick-links a:hover { color: var(--primary); }
+
+        .footer-text { text-align: center; margin-top: 2rem; font-size: 0.8rem; color: #94a3b8; }
+    </style>
 </head>
 <body>
 
-    <header>
-        <h1>Course Management System</h1>
-        <hr>
-    </header>
-
-    <main>
-
-        <section>
-            <h2>Login</h2>
+    <div class="login-wrapper">
+        <div class="login-card">
+            
+            <div class="login-brand">
+                <div class="brand-icon">CMS</div>
+                <h1 class="brand-title">Course Management</h1>
+                <p class="brand-subtitle">Sign in to access your dashboard</p>
+            </div>
 
             <form action="/login" method="post">
-
-                <p>
-                    <label for="username">Username</label><br>
+                <div class="form-group">
+                    <label for="username">Username</label>
                     <input
                         type="text"
                         id="username"
                         name="username"
+                        class="form-control"
+                        placeholder="Enter your username"
                         required>
-                </p>
+                </div>
 
-                <p>
-                    <label for="password">Password</label><br>
+                <div class="form-group">
+                    <label for="password">Password</label>
                     <input
                         type="password"
                         id="password"
                         name="password"
+                        class="form-control"
+                        placeholder="Enter your password"
                         required>
-                </p>
+                </div>
 
-                <p>
-                    <button type="submit">
-                        Login
-                    </button>
-                </p>
-
+                <button type="submit" class="btn-submit">
+                    Sign In
+                </button>
             </form>
 
-        </section>
+            <div class="info-box">
+                <h3>About System</h3>
+                <p>Welcome to the Course Management System. Students can register for courses, teachers manage assigned courses, and administrators handle system operations.</p>
+            </div>
 
-        <hr>
-
-        <section>
-
-            <h2>About</h2>
-
-            <p>
-                Welcome to the Course Management System.
-            </p>
-
-            <p>
-                Students can register for courses, teachers can manage
-                their assigned courses, and administrators can manage
-                users, courses, and registrations.
-            </p>
-
-        </section>
-
-        <hr>
-
-        <section>
-
-            <h2>Quick Links</h2>
-
-            <nav>
-                <ul>
-                    <li>
-                        <a href="/login">
-                            Login
-                        </a>
-                    </li>
-
-                    <li>
-                        <a href="/register">
-                            Register
-                        </a>
-                    </li>
-
-                    <li>
-                        <a href="/about">
-                            About
-                        </a>
-                    </li>
-                </ul>
+            <nav class="quick-links">
+                <a href="/login">Login</a>
+                <a href="/register">Register</a>
+                <a href="/about">About</a>
             </nav>
 
-        </section>
+            <div class="footer-text">
+                &copy; Course Management System
+            </div>
 
-    </main>
-
-    <hr>
-
-    <footer>
-
-        <p>
-            Course Management System
-        </p>
-
-    </footer>
+        </div>
+    </div>
 
 </body>
 </html>

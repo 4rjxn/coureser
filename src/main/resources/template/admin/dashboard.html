@@ -3,148 +3,222 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Administrator Dashboard</title>
+    <title>Administrator Dashboard - CMS</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+        :root {
+            --primary: #4f46e5;
+            --primary-hover: #4338ca;
+            --primary-light: #eef2ff;
+            --bg-main: #f8fafc;
+            --bg-card: #ffffff;
+            --bg-sidebar: #0f172a;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --radius-md: 10px;
+            --radius-lg: 16px;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+        }
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background-color: var(--bg-main); color: var(--text-main); line-height: 1.6; }
+        hr { display: none; }
+        a { color: var(--primary); text-decoration: none; }
+
+        .app-layout { display: flex; min-height: 100vh; }
+
+        /* Sidebar */
+        .sidebar { width: 260px; background-color: var(--bg-sidebar); color: #94a3b8; display: flex; flex-direction: column; flex-shrink: 0; }
+        .sidebar-header { padding: 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.08); display: flex; align-items: center; gap: 0.75rem; }
+        .sidebar-brand-icon { width: 36px; height: 36px; background: linear-gradient(135deg, #4f46e5, #818cf8); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 700; }
+        .sidebar-title { color: #fff; font-size: 1.1rem; font-weight: 700; }
+        .sidebar-subtitle { font-size: 0.75rem; color: #64748b; text-transform: uppercase; }
+
+        .sidebar-nav { padding: 1.25rem 0.75rem; flex: 1; display: flex; flex-direction: column; gap: 0.35rem; }
+        .sidebar-nav-item { display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem 1rem; color: #94a3b8; border-radius: var(--radius-md); font-weight: 500; font-size: 0.95rem; transition: all 0.2s; }
+        .sidebar-nav-item:hover { background-color: #1e293b; color: #fff; }
+        .sidebar-nav-item.active { background-color: var(--primary); color: #fff; box-shadow: 0 4px 12px rgba(79,70,229,0.3); }
+        .sidebar-nav-item.logout { margin-top: auto; color: #f87171; }
+        .sidebar-nav-item.logout:hover { background-color: rgba(239,68,68,0.15); color: #fca5a5; }
+
+        /* Main Content */
+        .main-wrapper { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+        .top-navbar { background: var(--bg-card); border-bottom: 1px solid var(--border-color); padding: 1rem 2rem; display: flex; align-items: center; justify-content: space-between; }
+        .page-title { font-size: 1.35rem; font-weight: 700; color: #0f172a; }
+        .user-badge { display: flex; align-items: center; gap: 0.5rem; background: var(--bg-main); padding: 0.4rem 0.85rem; border-radius: 999px; border: 1px solid var(--border-color); font-size: 0.875rem; font-weight: 500; }
+
+        .content-body { padding: 2rem; flex: 1; max-width: 1300px; width: 100%; margin: 0 auto; }
+        
+        .welcome-card { background: linear-gradient(135deg, #4f46e5 0%, #3730a3 100%); color: #fff; border-radius: var(--radius-lg); padding: 2rem; margin-bottom: 2rem; box-shadow: 0 10px 20px -5px rgba(79,70,229,0.3); }
+        .welcome-card h2 { font-size: 1.75rem; font-weight: 800; margin-bottom: 0.5rem; }
+        .welcome-card p { opacity: 0.9; font-size: 1rem; }
+
+        /* Stats Grid */
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
+        .stat-card { background: var(--bg-card); border-radius: var(--radius-lg); border: 1px solid var(--border-color); padding: 1.5rem; display: flex; align-items: center; gap: 1.25rem; box-shadow: var(--shadow-sm); }
+        .stat-icon { width: 52px; height: 52px; border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: 700; flex-shrink: 0; }
+        .stat-icon.students { background: #e0f2fe; color: #0284c7; }
+        .stat-icon.courses { background: #f0fdf4; color: #16a34a; }
+        .stat-icon.registrations { background: #fef3c7; color: #d97706; }
+        .stat-info .stat-value { font-size: 1.85rem; font-weight: 800; color: #0f172a; line-height: 1.2; }
+        .stat-info .stat-label { font-size: 0.875rem; color: var(--text-muted); font-weight: 500; }
+
+        /* Management Grid */
+        .manage-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
+        .manage-card { background: var(--bg-card); border-radius: var(--radius-lg); border: 1px solid var(--border-color); padding: 1.75rem; display: flex; flex-direction: column; justify-content: space-between; box-shadow: var(--shadow-sm); transition: all 0.2s; }
+        .manage-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); border-color: var(--primary); }
+        .manage-card h3 { font-size: 1.2rem; margin-bottom: 0.5rem; color: #0f172a; }
+        .manage-card p { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem; }
+        
+        .btn { display: inline-flex; align-items: center; justify-content: center; padding: 0.65rem 1.25rem; font-size: 0.9rem; font-weight: 600; border-radius: var(--radius-md); border: none; cursor: pointer; transition: all 0.2s; text-decoration: none; }
+        .btn-primary { background-color: var(--primary); color: #fff; box-shadow: 0 2px 4px rgba(79,70,229,0.2); }
+        .btn-primary:hover { background-color: var(--primary-hover); color: #fff; }
+
+        /* Summary Table */
+        .card-section { background: var(--bg-card); border-radius: var(--radius-lg); border: 1px solid var(--border-color); padding: 1.75rem; box-shadow: var(--shadow-sm); }
+        .card-title { font-size: 1.15rem; font-weight: 700; margin-bottom: 1.25rem; color: #0f172a; }
+        table { width: 100%; border-collapse: collapse; text-align: left; }
+        th { padding: 0.85rem 1rem; background: #f1f5f9; color: #475569; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1px solid var(--border-color); }
+        td { padding: 0.9rem 1rem; border-bottom: 1px solid var(--border-color); font-size: 0.95rem; font-weight: 500; }
+        tr:last-child td { border-bottom: none; }
+
+        footer { text-align: center; padding: 1.25rem; color: var(--text-muted); font-size: 0.85rem; border-top: 1px solid var(--border-color); background: var(--bg-card); margin-top: auto; }
+        
+        @media (max-width: 992px) {
+            .app-layout { flex-direction: column; }
+            .sidebar { width: 100%; }
+            .sidebar-nav { flex-direction: row; flex-wrap: wrap; }
+            .sidebar-nav-item.logout { margin-top: 0; }
+        }
+    </style>
 </head>
 <body>
 
-<header>
-    <h1>Course Management System</h1>
-    <p>Administrator Dashboard</p>
-    <hr>
-</header>
+<div class="app-layout">
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-brand-icon">CMS</div>
+            <div>
+                <div class="sidebar-title">Course Management</div>
+                <div class="sidebar-subtitle">Admin Panel</div>
+            </div>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="/admin/dashboard" class="sidebar-nav-item active">Dashboard</a>
+            <a href="/admin/students" class="sidebar-nav-item">Students</a>
+            <a href="/admin/courses" class="sidebar-nav-item">Courses</a>
+            <a href="/admin/registrations" class="sidebar-nav-item">Registrations</a>
+            <a href="/logout" class="sidebar-nav-item logout">Logout</a>
+        </nav>
+    </aside>
 
-<nav>
-    <ul>
-        <li><a href="/admin/dashboard">Dashboard</a></li>
-        <li><a href="/admin/students">Students</a></li>
-        <li><a href="/admin/courses">Courses</a></li>
-        <li><a href="/admin/registrations">Registrations</a></li>
-        <li><a href="/logout">Logout</a></li>
-    </ul>
-</nav>
+    <!-- Main Content Area -->
+    <div class="main-wrapper">
+        <header class="top-navbar">
+            <h1 class="page-title">Dashboard Overview</h1>
+            <div class="user-badge">
+                <span>Administrator</span>
+            </div>
+        </header>
 
-<hr>
+        <main class="content-body">
+            <!-- Welcome Hero -->
+            <div class="welcome-card">
+                <h2>Welcome back, {{adminName}}!</h2>
+                <p>Manage your students, active courses, and enrollment requests efficiently from your portal.</p>
+            </div>
 
-<main>
+            <!-- Stats Metric Cards -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon students">S</div>
+                    <div class="stat-info">
+                        <div class="stat-value">{{studentCount}}</div>
+                        <div class="stat-label">Total Students</div>
+                    </div>
+                </div>
 
-<section>
+                <div class="stat-card">
+                    <div class="stat-icon courses">C</div>
+                    <div class="stat-info">
+                        <div class="stat-value">{{courseCount}}</div>
+                        <div class="stat-label">Active Courses</div>
+                    </div>
+                </div>
 
-    <h2>Welcome</h2>
+                <div class="stat-card">
+                    <div class="stat-icon registrations">R</div>
+                    <div class="stat-info">
+                        <div class="stat-value">{{registrationCount}}</div>
+                        <div class="stat-label">Total Registrations</div>
+                    </div>
+                </div>
+            </div>
 
-    <p>
-        Welcome, {{adminName}}.
-    </p>
+            <!-- Management Sections -->
+            <div class="manage-grid">
+                <div class="manage-card">
+                    <div>
+                        <h3>Student Management</h3>
+                        <p>Search, add, edit, or remove student accounts and view credit allocations.</p>
+                    </div>
+                    <a href="/admin/students" class="btn btn-primary">Manage Students &rarr;</a>
+                </div>
 
-    <p>
-        Use the links below to manage the system.
-    </p>
+                <div class="manage-card">
+                    <div>
+                        <h3>Course Management</h3>
+                        <p>Create new course offerings, assign teachers, and set prerequisites.</p>
+                    </div>
+                    <a href="/admin/courses" class="btn btn-primary">Manage Courses &rarr;</a>
+                </div>
 
-</section>
+                <div class="manage-card">
+                    <div>
+                        <h3>Course Registrations</h3>
+                        <p>Enroll students into courses, inspect capacity limits, or drop registrations.</p>
+                    </div>
+                    <a href="/admin/registrations" class="btn btn-primary">Manage Registrations &rarr;</a>
+                </div>
+            </div>
 
-<hr>
+            <!-- System Summary Table -->
+            <div class="card-section">
+                <h3 class="card-title">System Metrics Summary</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Category</th>
+                            <th>Total Count</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Total Registered Students</td>
+                            <td><strong>{{studentCount}}</strong></td>
+                        </tr>
+                        <tr>
+                            <td>Total Available Courses</td>
+                            <td><strong>{{courseCount}}</strong></td>
+                        </tr>
+                        <tr>
+                            <td>Active Course Enrollment Records</td>
+                            <td><strong>{{registrationCount}}</strong></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
 
-<section>
-
-    <h2>Management</h2>
-
-    <article>
-
-        <h3>Students</h3>
-
-        <p>
-            Search, add, edit, remove and view student information.
-        </p>
-
-        <p>
-            <a href="/admin/students">Manage Students</a>
-        </p>
-
-    </article>
-
-    <hr>
-
-    <article>
-
-        <h3>Courses</h3>
-
-        <p>
-            Create, edit and remove courses.
-        </p>
-
-        <p>
-            <a href="/admin/courses">Manage Courses</a>
-        </p>
-
-    </article>
-
-    <hr>
-
-    <article>
-
-        <h3>Registrations</h3>
-
-        <p>
-            Register students for courses and manage registrations.
-        </p>
-
-        <p>
-            <a href="/admin/registrations">Manage Registrations</a>
-        </p>
-
-    </article>
-
-</section>
-
-<hr>
-
-<section>
-
-    <h2>System Summary</h2>
-
-    <table border="1">
-
-        <thead>
-            <tr>
-                <th>Category</th>
-                <th>Total</th>
-            </tr>
-        </thead>
-
-        <tbody>
-
-            <tr>
-                <td>Students</td>
-                <td>{{studentCount}}</td>
-            </tr>
-
-            <tr>
-                <td>Courses</td>
-                <td>{{courseCount}}</td>
-            </tr>
-
-            <tr>
-                <td>Registrations</td>
-                <td>{{registrationCount}}</td>
-            </tr>
-
-        </tbody>
-
-    </table>
-
-</section>
-
-</main>
-
-<hr>
-
-<footer>
-
-<p>
-    Logged in as Administrator
-</p>
-
-</footer>
+        <footer>
+            Logged in as Administrator &bull; Course Management System
+        </footer>
+    </div>
+</div>
 
 </body>
 </html>
-

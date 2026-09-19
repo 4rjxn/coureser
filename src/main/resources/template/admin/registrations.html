@@ -3,220 +3,266 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Course Registrations</title>
+    <title>Course Registrations - CMS</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+        :root {
+            --primary: #4f46e5;
+            --primary-hover: #4338ca;
+            --primary-light: #eef2ff;
+            --bg-main: #f8fafc;
+            --bg-card: #ffffff;
+            --bg-sidebar: #0f172a;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --radius-md: 10px;
+            --radius-lg: 16px;
+            --radius-sm: 6px;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --danger-bg: #fef2f2;
+            --danger-text: #991b1b;
+        }
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background-color: var(--bg-main); color: var(--text-main); line-height: 1.6; }
+        hr { display: none; }
+        a { color: var(--primary); text-decoration: none; }
+
+        .app-layout { display: flex; min-height: 100vh; }
+
+        /* Sidebar */
+        .sidebar { width: 260px; background-color: var(--bg-sidebar); color: #94a3b8; display: flex; flex-direction: column; flex-shrink: 0; }
+        .sidebar-header { padding: 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.08); display: flex; align-items: center; gap: 0.75rem; }
+        .sidebar-brand-icon { width: 36px; height: 36px; background: linear-gradient(135deg, #4f46e5, #818cf8); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 700; }
+        .sidebar-title { color: #fff; font-size: 1.1rem; font-weight: 700; }
+        .sidebar-subtitle { font-size: 0.75rem; color: #64748b; text-transform: uppercase; }
+
+        .sidebar-nav { padding: 1.25rem 0.75rem; flex: 1; display: flex; flex-direction: column; gap: 0.35rem; }
+        .sidebar-nav-item { display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem 1rem; color: #94a3b8; border-radius: var(--radius-md); font-weight: 500; font-size: 0.95rem; transition: all 0.2s; }
+        .sidebar-nav-item:hover { background-color: #1e293b; color: #fff; }
+        .sidebar-nav-item.active { background-color: var(--primary); color: #fff; box-shadow: 0 4px 12px rgba(79,70,229,0.3); }
+        .sidebar-nav-item.logout { margin-top: auto; color: #f87171; }
+        .sidebar-nav-item.logout:hover { background-color: rgba(239,68,68,0.15); color: #fca5a5; }
+
+        /* Main Content */
+        .main-wrapper { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+        .top-navbar { background: var(--bg-card); border-bottom: 1px solid var(--border-color); padding: 1rem 2rem; display: flex; align-items: center; justify-content: space-between; }
+        .page-title { font-size: 1.35rem; font-weight: 700; color: #0f172a; }
+
+        .content-body { padding: 2rem; flex: 1; max-width: 1300px; width: 100%; margin: 0 auto; }
+
+        .card-section { background: var(--bg-card); border-radius: var(--radius-lg); border: 1px solid var(--border-color); padding: 1.75rem; margin-bottom: 1.75rem; box-shadow: var(--shadow-sm); }
+        .section-title { font-size: 1.15rem; font-weight: 700; margin-bottom: 1.25rem; color: #0f172a; display: flex; align-items: center; justify-content: space-between; }
+
+        .form-control, select { width: 100%; padding: 0.65rem 0.9rem; border: 1px solid var(--border-color); border-radius: var(--radius-md); font-size: 0.95rem; font-family: inherit; outline: none; transition: all 0.2s; }
+        .form-control:focus, select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(79,70,229,0.15); }
+
+        .search-form { display: flex; gap: 0.75rem; max-width: 500px; margin-bottom: 1.25rem; }
+
+        .btn { display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 0.65rem 1.25rem; font-size: 0.9rem; font-weight: 600; border-radius: var(--radius-md); border: none; cursor: pointer; transition: all 0.2s; text-decoration: none; }
+        .btn-primary { background-color: var(--primary); color: #fff; }
+        .btn-primary:hover { background-color: var(--primary-hover); color: #fff; }
+        .btn-secondary { background-color: #f1f5f9; color: var(--text-main); border: 1px solid var(--border-color); }
+        .btn-secondary:hover { background-color: #e2e8f0; }
+
+        .table-responsive { width: 100%; overflow-x: auto; border-radius: var(--radius-md); border: 1px solid var(--border-color); }
+        table { width: 100%; border-collapse: collapse; text-align: left; font-size: 0.9rem; }
+        thead { background-color: #f1f5f9; }
+        th { padding: 0.85rem 1rem; font-weight: 600; color: #475569; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.05em; border-bottom: 1px solid var(--border-color); }
+        td { padding: 0.9rem 1rem; border-bottom: 1px solid var(--border-color); color: var(--text-main); vertical-align: middle; }
+        tbody tr:last-child td { border-bottom: none; }
+        tbody tr:hover { background-color: #f8fafc; }
+
+        td a { display: inline-block; padding: 0.3rem 0.65rem; border-radius: var(--radius-sm); font-size: 0.8rem; font-weight: 500; transition: all 0.2s; }
+        td a[href*="studentId="] { background-color: #f0fdf4; color: #166534; }
+        td a[href*="drop"] { background-color: var(--danger-bg); color: var(--danger-text); }
+        td a:hover { opacity: 0.85; }
+
+        .selected-banner { background-color: var(--primary-light); border: 1px solid #c7d2fe; border-radius: var(--radius-md); padding: 1rem; margin-bottom: 1.25rem; color: #3730a3; font-weight: 500; }
+
+        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.25rem; margin-bottom: 1.25rem; }
+
+        .pagination { display: flex; align-items: center; justify-content: space-between; margin-top: 1.25rem; }
+        .pagination-info { font-size: 0.875rem; color: var(--text-muted); }
+        .pagination-links { display: flex; gap: 0.5rem; }
+        .pagination-links a { padding: 0.4rem 0.85rem; border: 1px solid var(--border-color); border-radius: var(--radius-md); font-size: 0.85rem; font-weight: 500; color: var(--text-main); }
+        .pagination-links a:hover { background-color: #f1f5f9; }
+
+        footer { text-align: center; padding: 1.25rem; color: var(--text-muted); font-size: 0.85rem; border-top: 1px solid var(--border-color); background: var(--bg-card); margin-top: auto; }
+
+        @media (max-width: 992px) {
+            .app-layout { flex-direction: column; }
+            .sidebar { width: 100%; }
+            .sidebar-nav { flex-direction: row; flex-wrap: wrap; }
+            .sidebar-nav-item.logout { margin-top: 0; }
+        }
+    </style>
 </head>
 <body>
 
-<header>
-
-    <h1>Course Management System</h1>
-
-    <p>Manage Course Registrations</p>
-
-    <hr>
-
-</header>
-
-<nav>
-
-    <a href="/admin/dashboard">Dashboard</a> |
-    <a href="/admin/students">Students</a> |
-    <a href="/admin/courses">Courses</a> |
-    <a href="/admin/registrations">Registrations</a> |
-    <a href="/logout">Logout</a>
-
-</nav>
-
-<hr>
-
-<main>
-
-<section>
-
-    <h2>Select Student</h2>
-
-    <form action="/admin/registrations/add" method="get">
-
-        <label for="query">
-            Student Name or Student ID
-        </label>
-
-        <br>
-
-        <input
-            type="search"
-            id="query"
-            name="query"
-            value="{{query}}"
-            placeholder="Search students">
-
-        <button type="submit">
-            Search
-        </button>
-
-    </form>
-
-    <br>
-
-    <table border="1">
-
-        <thead>
-
-            <tr>
-                <th>Student ID</th>
-                <th>Name</th>
-                <th>Action</th>
-            </tr>
-
-        </thead>
-
-        <tbody>
-
-            {{studentRows}}
-
-        </tbody>
-
-    </table>
-
-</section>
-
-<hr>
-
-<section>
-
-    <h2>Register Selected Student</h2>
-
-    <p>
-
-        Selected Student:
-        <strong>{{selectedStudent}}</strong>
-
-    </p>
-
-    <form action="/admin/registrations/add" method="post">
-
-        <input
-            type="hidden"
-            name="studentId"
-            value="{{studentId}}">
-
-        <p>
-
-            <label for="courseId">
-                Course
-            </label>
-
-            <br>
-
-            <select
-                id="courseId"
-                name="courseId"
-                required>
-
-                {{courseOptions}}
-
-            </select>
-
-        </p>
-
-        <button type="submit">
-            Register Student
-        </button>
-
-    </form>
-
-</section>
-
-<hr>
-
-<section>
-
-    <h2>Current Registrations</h2>
-
-    <form action="/admin/registrations" method="get">
-
-        <label for="registrationQuery">
-            Search Registrations
-        </label>
-
-        <input
-            type="search"
-            id="registrationQuery"
-            name="registrationQuery"
-            value="{{registrationQuery}}"
-            placeholder="Student, Course...">
-
-        <button type="submit">
-            Search
-        </button>
-
-    </form>
-
-    <br>
-
-    <table border="1">
-
-        <thead>
-
-            <tr>
-                <th>Student ID</th>
-                <th>Student Name</th>
-                <th>Course Code</th>
-                <th>Course Title</th>
-                <th>Credits</th>
-                <th>Action</th>
-            </tr>
-
-        </thead>
-
-        <tbody>
-
-            {{registrationRows}}
-
-        </tbody>
-
-    </table>
-
-</section>
-
-<hr>
-
-<section>
-
-    <p>
-
-        <a href="{{previousPage}}">
-            Previous
-        </a>
-
-        &nbsp;
-
-        Page {{currentPage}} of {{totalPages}}
-
-        &nbsp;
-
-        <a href="{{nextPage}}">
-            Next
-        </a>
-
-    </p>
-
-</section>
-
-</main>
-
-<hr>
-
-<footer>
-
-<p>
-
-    Total Registrations:
-    {{registrationCount}}
-
-</p>
-
-</footer>
+<div class="app-layout">
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-brand-icon">CMS</div>
+            <div>
+                <div class="sidebar-title">Course Management</div>
+                <div class="sidebar-subtitle">Admin Panel</div>
+            </div>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="/admin/dashboard" class="sidebar-nav-item">Dashboard</a>
+            <a href="/admin/students" class="sidebar-nav-item">Students</a>
+            <a href="/admin/courses" class="sidebar-nav-item">Courses</a>
+            <a href="/admin/registrations" class="sidebar-nav-item active">Registrations</a>
+            <a href="/logout" class="sidebar-nav-item logout">Logout</a>
+        </nav>
+    </aside>
+
+    <div class="main-wrapper">
+        <header class="top-navbar">
+            <h1 class="page-title">Course Registrations</h1>
+        </header>
+
+        <main class="content-body">
+            <!-- Step 1: Select Student -->
+            <div class="card-section">
+                <h2 class="section-title">1. Search & Select Student</h2>
+                
+                <form action="/admin/registrations/add" method="get" class="search-form">
+                    <input
+                        type="search"
+                        id="query"
+                        name="query"
+                        class="form-control"
+                        value="{{query}}"
+                        placeholder="Search student by Name or ID...">
+                    <button type="submit" class="btn btn-primary">Search</button>
+                </form>
+
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Student ID</th>
+                                <th>Name</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {{studentRows}}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Step 2: Register Course -->
+            <div class="card-section">
+                <h2 class="section-title">2. Register Selected Student for Course</h2>
+                
+                <div class="selected-banner">
+                    Selected Student: <strong>{{selectedStudent}}</strong>
+                </div>
+
+                <form action="/admin/registrations/add" method="post">
+                    <input type="hidden" name="studentId" value="{{studentId}}">
+                    
+                    <div style="margin-bottom: 1.25rem;">
+                        <label for="courseId" style="display: block; font-weight: 600; margin-bottom: 0.5rem; font-size: 0.875rem;">Select Course to Register</label>
+                        <select id="courseId" name="courseId" required>
+                            {{courseOptions}}
+                        </select>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Register Student</button>
+                </form>
+            </div>
+
+            <!-- Step 3: Record Completed Prerequisites / Course History -->
+            <div class="card-section">
+                <h2 class="section-title">3. Record Completed Course History</h2>
+                <form action="/admin/registrations/add-completed" method="post">
+                    <div class="form-grid">
+                        <div>
+                            <label for="completedStudentId" style="display: block; font-weight: 600; margin-bottom: 0.5rem; font-size: 0.875rem;">Student ID</label>
+                            <input
+                                type="text"
+                                id="completedStudentId"
+                                name="studentId"
+                                class="form-control"
+                                value="{{studentId}}"
+                                placeholder="Enter Student ID (e.g. S1001)"
+                                required>
+                        </div>
+                        <div>
+                            <label for="completedCourseCode" style="display: block; font-weight: 600; margin-bottom: 0.5rem; font-size: 0.875rem;">Completed Course Code</label>
+                            <input
+                                type="text"
+                                id="completedCourseCode"
+                                name="courseCode"
+                                class="form-control"
+                                placeholder="Enter Course Code (e.g. CS101)"
+                                required>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-secondary">Add Completed Course</button>
+                </form>
+            </div>
+
+            <!-- Step 4: View & Manage Active Registrations -->
+            <div class="card-section">
+                <div class="section-title">
+                    <span>Active Course Registrations</span>
+                    <span style="font-size: 0.9rem; font-weight: 500; color: var(--text-muted);">Total: {{registrationCount}}</span>
+                </div>
+
+                <form action="/admin/registrations" method="get" class="search-form">
+                    <input
+                        type="search"
+                        id="registrationQuery"
+                        name="registrationQuery"
+                        class="form-control"
+                        value="{{registrationQuery}}"
+                        placeholder="Search active registrations...">
+                    <button type="submit" class="btn btn-primary">Filter</button>
+                </form>
+
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Student ID</th>
+                                <th>Student Name</th>
+                                <th>Course Code</th>
+                                <th>Course Title</th>
+                                <th>Credits</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {{registrationRows}}
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="pagination">
+                    <div class="pagination-info">
+                        Page <strong>{{currentPage}}</strong> of <strong>{{totalPages}}</strong>
+                    </div>
+                    <div class="pagination-links">
+                        <a href="{{previousPage}}">&larr; Previous</a>
+                        <a href="{{nextPage}}">Next &rarr;</a>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            Total Registrations: {{registrationCount}} &bull; Course Management System
+        </footer>
+    </div>
+</div>
 
 </body>
 </html>

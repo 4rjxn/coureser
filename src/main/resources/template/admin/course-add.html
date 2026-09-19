@@ -3,212 +3,171 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add Course</title>
+    <title>Add Course - CMS</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+        :root {
+            --primary: #4f46e5;
+            --primary-hover: #4338ca;
+            --bg-main: #f8fafc;
+            --bg-card: #ffffff;
+            --bg-sidebar: #0f172a;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --radius-md: 10px;
+            --radius-lg: 16px;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+        }
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background-color: var(--bg-main); color: var(--text-main); line-height: 1.6; }
+        hr { display: none; }
+        a { color: var(--primary); text-decoration: none; }
+
+        .app-layout { display: flex; min-height: 100vh; }
+
+        .sidebar { width: 260px; background-color: var(--bg-sidebar); color: #94a3b8; display: flex; flex-direction: column; flex-shrink: 0; }
+        .sidebar-header { padding: 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.08); display: flex; align-items: center; gap: 0.75rem; }
+        .sidebar-brand-icon { width: 36px; height: 36px; background: linear-gradient(135deg, #4f46e5, #818cf8); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 700; }
+        .sidebar-title { color: #fff; font-size: 1.1rem; font-weight: 700; }
+        .sidebar-subtitle { font-size: 0.75rem; color: #64748b; text-transform: uppercase; }
+
+        .sidebar-nav { padding: 1.25rem 0.75rem; flex: 1; display: flex; flex-direction: column; gap: 0.35rem; }
+        .sidebar-nav-item { display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem 1rem; color: #94a3b8; border-radius: var(--radius-md); font-weight: 500; font-size: 0.95rem; transition: all 0.2s; }
+        .sidebar-nav-item:hover { background-color: #1e293b; color: #fff; }
+        .sidebar-nav-item.active { background-color: var(--primary); color: #fff; box-shadow: 0 4px 12px rgba(79,70,229,0.3); }
+        .sidebar-nav-item.logout { margin-top: auto; color: #f87171; }
+        .sidebar-nav-item.logout:hover { background-color: rgba(239,68,68,0.15); color: #fca5a5; }
+
+        .main-wrapper { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+        .top-navbar { background: var(--bg-card); border-bottom: 1px solid var(--border-color); padding: 1rem 2rem; display: flex; align-items: center; justify-content: space-between; }
+        .page-title { font-size: 1.35rem; font-weight: 700; color: #0f172a; }
+
+        .content-body { padding: 2rem; flex: 1; max-width: 900px; width: 100%; margin: 0 auto; }
+
+        .card-section { background: var(--bg-card); border-radius: var(--radius-lg); border: 1px solid var(--border-color); padding: 2rem; box-shadow: var(--shadow-sm); }
+        
+        fieldset { border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 1.5rem; margin-bottom: 1.5rem; background: #fff; }
+        legend { font-weight: 600; font-size: 0.95rem; padding: 0 0.5rem; color: var(--primary); }
+
+        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.25rem; }
+        .form-group { display: flex; flex-direction: column; gap: 0.4rem; }
+        .form-group.full-width { grid-column: 1 / -1; }
+        .form-group label { font-size: 0.875rem; font-weight: 600; color: #334155; }
+        .form-control, select, textarea { width: 100%; padding: 0.65rem 0.9rem; border: 1px solid var(--border-color); border-radius: var(--radius-md); font-size: 0.95rem; font-family: inherit; outline: none; transition: all 0.2s; }
+        .form-control:focus, select:focus, textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(79,70,229,0.15); }
+        select[multiple] { padding: 0.5rem; }
+        select[multiple] option { padding: 0.4rem 0.6rem; border-radius: 4px; margin-bottom: 2px; }
+
+        .btn-group { display: flex; align-items: center; gap: 0.75rem; margin-top: 1.5rem; }
+        .btn { display: inline-flex; align-items: center; justify-content: center; padding: 0.65rem 1.25rem; font-size: 0.9rem; font-weight: 600; border-radius: var(--radius-md); border: none; cursor: pointer; transition: all 0.2s; text-decoration: none; }
+        .btn-primary { background-color: var(--primary); color: #fff; }
+        .btn-primary:hover { background-color: var(--primary-hover); }
+        .btn-secondary { background-color: var(--bg-main); border: 1px solid var(--border-color); color: var(--text-main); }
+        .btn-secondary:hover { background-color: #e2e8f0; }
+
+        .help-text { font-size: 0.8rem; color: var(--text-muted); margin-top: 0.35rem; }
+
+        footer { text-align: center; padding: 1.25rem; color: var(--text-muted); font-size: 0.85rem; border-top: 1px solid var(--border-color); background: var(--bg-card); margin-top: auto; }
+
+        @media (max-width: 992px) {
+            .app-layout { flex-direction: column; }
+            .sidebar { width: 100%; }
+            .sidebar-nav { flex-direction: row; flex-wrap: wrap; }
+            .sidebar-nav-item.logout { margin-top: 0; }
+        }
+    </style>
 </head>
 <body>
 
-<header>
-
-    <h1>Course Management System</h1>
-
-    <p>Add Course</p>
-
-    <hr>
-
-</header>
-
-<nav>
-
-    <a href="/admin/dashboard">Dashboard</a> |
-    <a href="/admin/students">Students</a> |
-    <a href="/admin/courses">Courses</a> |
-    <a href="/admin/registrations">Registrations</a> |
-    <a href="/logout">Logout</a>
-
-</nav>
-
-<hr>
-
-<main>
-
-<form action="/admin/courses/add" method="post">
-
-    <fieldset>
-
-        <legend>Course Information</legend>
-
-        <p>
-
-            <label for="code">
-                Course Code
-            </label>
-
-            <br>
-
-            <input
-                type="text"
-                id="code"
-                name="code"
-                required>
-
-        </p>
-
-        <p>
-
-            <label for="title">
-                Course Title
-            </label>
-
-            <br>
-
-            <input
-                type="text"
-                id="title"
-                name="title"
-                required>
-
-        </p>
-
-        <p>
-
-            <label for="description">
-                Description
-            </label>
-
-            <br>
-
-            <textarea
-                id="description"
-                name="description"
-                rows="6"
-                cols="50"></textarea>
-
-        </p>
-
-        <p>
-
-            <label for="credits">
-                Credits
-            </label>
-
-            <br>
-
-            <input
-                type="number"
-                id="credits"
-                name="credits"
-                min="1"
-                required>
-
-        </p>
-
-        <p>
-
-            <label for="maxEnrollment">
-                Maximum Enrollment
-            </label>
-
-            <br>
-
-            <input
-                type="number"
-                id="maxEnrollment"
-                name="maxEnrollment"
-                min="1"
-                required>
-
-        </p>
-
-    </fieldset>
-
-    <br>
-
-    <fieldset>
-
-        <legend>Teacher Assignment</legend>
-
-        <p>
-
-            <label for="teacherId">
-                Assigned Teacher
-            </label>
-
-            <br>
-
-            <select
-                id="teacherId"
-                name="teacherId">
-
-                {{teacherOptions}}
-
-            </select>
-
-        </p>
-
-    </fieldset>
-
-    <br>
-
-    <fieldset>
-
-        <legend>Prerequisites</legend>
-
-        <p>
-
-            <label for="prerequisites">
-                Prerequisite Courses
-            </label>
-
-            <br>
-
-            <select
-                id="prerequisites"
-                name="prerequisites"
-                multiple
-                size="8">
-
-                {{prerequisiteOptions}}
-
-            </select>
-
-        </p>
-
-        <p>
-
-            Hold Ctrl (Windows/Linux) or Command (macOS)
-            to select multiple courses.
-
-        </p>
-
-    </fieldset>
-
-    <br>
-
-    <button type="submit">
-        Add Course
-    </button>
-
-    <button type="reset">
-        Clear
-    </button>
-
-</form>
-
-</main>
-
-<hr>
-
-<footer>
-
-<p>
-
-    <a href="/admin/courses">
-        Back to Course List
-    </a>
-
-</p>
-
-</footer>
+<div class="app-layout">
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-brand-icon">CMS</div>
+            <div>
+                <div class="sidebar-title">Course Management</div>
+                <div class="sidebar-subtitle">Admin Panel</div>
+            </div>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="/admin/dashboard" class="sidebar-nav-item">Dashboard</a>
+            <a href="/admin/students" class="sidebar-nav-item">Students</a>
+            <a href="/admin/courses" class="sidebar-nav-item active">Courses</a>
+            <a href="/admin/registrations" class="sidebar-nav-item">Registrations</a>
+            <a href="/logout" class="sidebar-nav-item logout">Logout</a>
+        </nav>
+    </aside>
+
+    <div class="main-wrapper">
+        <header class="top-navbar">
+            <h1 class="page-title">Add New Course</h1>
+            <a href="/admin/courses" class="btn btn-secondary">&larr; Back to Course List</a>
+        </header>
+
+        <main class="content-body">
+            <div class="card-section">
+                <form action="/admin/courses/add" method="post">
+                    <fieldset>
+                        <legend>Course Details</legend>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="code">Course Code</label>
+                                <input type="text" id="code" name="code" class="form-control" placeholder="e.g. CS101" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="title">Course Title</label>
+                                <input type="text" id="title" name="title" class="form-control" placeholder="e.g. Intro to Computer Science" required>
+                            </div>
+                            <div class="form-group full-width">
+                                <label for="description">Description</label>
+                                <textarea id="description" name="description" rows="4" class="form-control" placeholder="Course overview and syllabus outline..."></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="credits">Credits</label>
+                                <input type="number" id="credits" name="credits" class="form-control" min="1" value="3" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="maxEnrollment">Maximum Capacity</label>
+                                <input type="number" id="maxEnrollment" name="maxEnrollment" class="form-control" min="1" value="30" required>
+                            </div>
+                        </div>
+                    </fieldset>
+
+                    <fieldset>
+                        <legend>Instructor & Prerequisites</legend>
+                        <div class="form-grid">
+                            <div class="form-group full-width">
+                                <label for="teacherId">Assigned Instructor</label>
+                                <select id="teacherId" name="teacherId">
+                                    {{teacherOptions}}
+                                </select>
+                            </div>
+
+                            <div class="form-group full-width">
+                                <label for="prerequisites">Prerequisite Courses</label>
+                                <select id="prerequisites" name="prerequisites" multiple size="6">
+                                    {{prerequisiteOptions}}
+                                </select>
+                                <div class="help-text">Hold Ctrl (Windows/Linux) or Command (macOS) to select multiple prerequisites.</div>
+                            </div>
+                        </div>
+                    </fieldset>
+
+                    <div class="btn-group">
+                        <button type="submit" class="btn btn-primary">Create Course Offering</button>
+                        <button type="reset" class="btn btn-secondary">Clear</button>
+                    </div>
+                </form>
+            </div>
+        </main>
+
+        <footer>
+            Course Management System &bull; Admin Operations
+        </footer>
+    </div>
+</div>
 
 </body>
 </html>

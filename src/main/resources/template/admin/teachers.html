@@ -3,147 +3,175 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Manage Teachers</title>
+    <title>Manage Teachers - CMS</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+        :root {
+            --primary: #4f46e5;
+            --primary-hover: #4338ca;
+            --primary-light: #eef2ff;
+            --primary-text: #3730a3;
+            --bg-main: #f8fafc;
+            --bg-card: #ffffff;
+            --bg-sidebar: #0f172a;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --radius-md: 10px;
+            --radius-lg: 16px;
+            --radius-sm: 6px;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --danger-bg: #fef2f2;
+            --danger-text: #991b1b;
+        }
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background-color: var(--bg-main); color: var(--text-main); line-height: 1.6; }
+        hr { display: none; }
+        a { color: var(--primary); text-decoration: none; }
+
+        .app-layout { display: flex; min-height: 100vh; }
+
+        .sidebar { width: 260px; background-color: var(--bg-sidebar); color: #94a3b8; display: flex; flex-direction: column; flex-shrink: 0; }
+        .sidebar-header { padding: 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.08); display: flex; align-items: center; gap: 0.75rem; }
+        .sidebar-brand-icon { width: 36px; height: 36px; background: linear-gradient(135deg, #4f46e5, #818cf8); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 700; }
+        .sidebar-title { color: #fff; font-size: 1.1rem; font-weight: 700; }
+        .sidebar-subtitle { font-size: 0.75rem; color: #64748b; text-transform: uppercase; }
+
+        .sidebar-nav { padding: 1.25rem 0.75rem; flex: 1; display: flex; flex-direction: column; gap: 0.35rem; }
+        .sidebar-nav-item { display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem 1rem; color: #94a3b8; border-radius: var(--radius-md); font-weight: 500; font-size: 0.95rem; transition: all 0.2s; }
+        .sidebar-nav-item:hover { background-color: #1e293b; color: #fff; }
+        .sidebar-nav-item.active { background-color: var(--primary); color: #fff; box-shadow: 0 4px 12px rgba(79,70,229,0.3); }
+        .sidebar-nav-item.logout { margin-top: auto; color: #f87171; }
+        .sidebar-nav-item.logout:hover { background-color: rgba(239,68,68,0.15); color: #fca5a5; }
+
+        .main-wrapper { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+        .top-navbar { background: var(--bg-card); border-bottom: 1px solid var(--border-color); padding: 1rem 2rem; display: flex; align-items: center; justify-content: space-between; }
+        .page-title { font-size: 1.35rem; font-weight: 700; color: #0f172a; }
+
+        .content-body { padding: 2rem; flex: 1; max-width: 1300px; width: 100%; margin: 0 auto; }
+
+        .card-section { background: var(--bg-card); border-radius: var(--radius-lg); border: 1px solid var(--border-color); padding: 1.75rem; margin-bottom: 1.75rem; box-shadow: var(--shadow-sm); }
+        
+        .header-actions { display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; margin-bottom: 1.5rem; }
+        
+        .search-form { display: flex; align-items: center; gap: 0.75rem; flex: 1; max-width: 450px; }
+        .form-control { width: 100%; padding: 0.65rem 0.9rem; border: 1px solid var(--border-color); border-radius: var(--radius-md); font-size: 0.95rem; outline: none; transition: all 0.2s; }
+        .form-control:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(79,70,229,0.15); }
+
+        .btn { display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 0.65rem 1.25rem; font-size: 0.9rem; font-weight: 600; border-radius: var(--radius-md); border: none; cursor: pointer; transition: all 0.2s; text-decoration: none; }
+        .btn-primary { background-color: var(--primary); color: #fff; }
+        .btn-primary:hover { background-color: var(--primary-hover); color: #fff; }
+
+        .table-responsive { width: 100%; overflow-x: auto; border-radius: var(--radius-md); border: 1px solid var(--border-color); }
+        table { width: 100%; border-collapse: collapse; text-align: left; font-size: 0.9rem; }
+        thead { background-color: #f1f5f9; }
+        th { padding: 0.85rem 1rem; font-weight: 600; color: #475569; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.05em; border-bottom: 1px solid var(--border-color); }
+        td { padding: 0.9rem 1rem; border-bottom: 1px solid var(--border-color); color: var(--text-main); vertical-align: middle; }
+        tbody tr:last-child td { border-bottom: none; }
+        tbody tr:hover { background-color: #f8fafc; }
+
+        td a { display: inline-block; padding: 0.3rem 0.65rem; border-radius: var(--radius-sm); font-size: 0.8rem; font-weight: 500; margin-right: 0.3rem; transition: all 0.2s; }
+        td a[href*="edit"] { background-color: var(--primary-light); color: var(--primary-text); }
+        td a[href*="delete"] { background-color: var(--danger-bg); color: var(--danger-text); }
+        td a:hover { opacity: 0.85; }
+
+        .pagination { display: flex; align-items: center; justify-content: space-between; margin-top: 1.25rem; }
+        .pagination-info { font-size: 0.875rem; color: var(--text-muted); }
+        .pagination-links { display: flex; gap: 0.5rem; }
+        .pagination-links a { padding: 0.4rem 0.85rem; border: 1px solid var(--border-color); border-radius: var(--radius-md); font-size: 0.85rem; font-weight: 500; color: var(--text-main); }
+        .pagination-links a:hover { background-color: #f1f5f9; }
+
+        footer { text-align: center; padding: 1.25rem; color: var(--text-muted); font-size: 0.85rem; border-top: 1px solid var(--border-color); background: var(--bg-card); margin-top: auto; }
+
+        @media (max-width: 992px) {
+            .app-layout { flex-direction: column; }
+            .sidebar { width: 100%; }
+            .sidebar-nav { flex-direction: row; flex-wrap: wrap; }
+            .sidebar-nav-item.logout { margin-top: 0; }
+        }
+    </style>
 </head>
 <body>
 
-<header>
+<div class="app-layout">
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-brand-icon">CMS</div>
+            <div>
+                <div class="sidebar-title">Course Management</div>
+                <div class="sidebar-subtitle">Admin Panel</div>
+            </div>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="/admin/dashboard" class="sidebar-nav-item">Dashboard</a>
+            <a href="/admin/students" class="sidebar-nav-item">Students</a>
+            <a href="/admin/courses" class="sidebar-nav-item">Courses</a>
+            <a href="/admin/registrations" class="sidebar-nav-item">Registrations</a>
+            <a href="/logout" class="sidebar-nav-item logout">Logout</a>
+        </nav>
+    </aside>
 
-    <h1>Course Management System</h1>
+    <div class="main-wrapper">
+        <header class="top-navbar">
+            <h1 class="page-title">Teacher Management</h1>
+            <a href="/admin/teachers/add" class="btn btn-primary">+ Add New Teacher</a>
+        </header>
 
-    <p>Manage Teachers</p>
+        <main class="content-body">
+            <div class="card-section">
+                <div class="header-actions">
+                    <form action="/admin/teachers/search" method="get" class="search-form">
+                        <input
+                            type="search"
+                            id="query"
+                            name="query"
+                            class="form-control"
+                            value="{{query}}"
+                            placeholder="Search by Teacher ID or Name...">
+                        <button type="submit" class="btn btn-primary">Search</button>
+                    </form>
+                    <div style="font-size: 0.9rem; color: var(--text-muted);">
+                        Total Teachers: <strong>{{teacherCount}}</strong>
+                    </div>
+                </div>
 
-    <hr>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Teacher ID</th>
+                                <th>Name</th>
+                                <th>Username</th>
+                                <th>Email</th>
+                                <th>Department</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {{teacherRows}}
+                        </tbody>
+                    </table>
+                </div>
 
-</header>
+                <div class="pagination">
+                    <div class="pagination-info">
+                        Page <strong>{{currentPage}}</strong> of <strong>{{totalPages}}</strong>
+                    </div>
+                    <div class="pagination-links">
+                        <a href="{{previousPage}}">&larr; Previous</a>
+                        <a href="{{nextPage}}">Next &rarr;</a>
+                    </div>
+                </div>
+            </div>
+        </main>
 
-<nav>
-
-    <a href="/admin/dashboard">Dashboard</a> |
-    <a href="/admin/students">Students</a> |
-    <a href="/admin/courses">Courses</a> |
-    <a href="/admin/registrations">Registrations</a> |
-    <a href="/logout">Logout</a>
-
-</nav>
-
-<hr>
-
-<main>
-
-<section>
-
-    <h2>Search Teachers</h2>
-
-    <form action="/admin/teachers/search" method="get">
-
-        <label for="query">
-            Teacher ID or Name
-        </label>
-
-        <input
-            type="search"
-            id="query"
-            name="query"
-            placeholder="Search...">
-
-        <button type="submit">
-            Search
-        </button>
-
-    </form>
-
-</section>
-
-<hr>
-
-<section>
-
-    <h2>Actions</h2>
-
-    <p>
-
-        <a href="/admin/teachers/add">
-            Add New Teacher
-        </a>
-
-    </p>
-
-</section>
-
-<hr>
-
-<section>
-
-    <h2>Teacher List</h2>
-
-    <table border="1">
-
-        <thead>
-
-            <tr>
-                <th>Teacher ID</th>
-                <th>Name</th>
-                <th>Username</th>
-                <th>Email</th>
-                <th>Department</th>
-                <th>Actions</th>
-            </tr>
-
-        </thead>
-
-        <tbody>
-
-            {{teacherRows}}
-
-        </tbody>
-
-    </table>
-
-</section>
-
-<hr>
-
-<section>
-
-    <h2>Pages</h2>
-
-    <p>
-
-        <a href="{{previousPage}}">
-            Previous
-        </a>
-
-        &nbsp;
-
-        Page {{currentPage}} of {{totalPages}}
-
-        &nbsp;
-
-        <a href="{{nextPage}}">
-            Next
-        </a>
-
-    </p>
-
-</section>
-
-</main>
-
-<hr>
-
-<footer>
-
-<p>
-
-    Total Teachers:
-    {{teacherCount}}
-
-</p>
-
-</footer>
+        <footer>
+            Total Teachers: {{teacherCount}} &bull; Course Management System
+        </footer>
+    </div>
+</div>
 
 </body>
 </html>
-```
-
