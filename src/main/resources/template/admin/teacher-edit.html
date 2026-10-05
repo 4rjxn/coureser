@@ -8,8 +8,8 @@
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
         :root {
-            --primary: #4f46e5;
-            --primary-hover: #4338ca;
+            --primary: #0f172a;
+            --primary-hover: #1e293b;
             --bg-main: #f8fafc;
             --bg-card: #ffffff;
             --bg-sidebar: #0f172a;
@@ -30,14 +30,14 @@
 
         .sidebar { width: 260px; background-color: var(--bg-sidebar); color: #94a3b8; display: flex; flex-direction: column; flex-shrink: 0; }
         .sidebar-header { padding: 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.08); display: flex; align-items: center; gap: 0.75rem; }
-        .sidebar-brand-icon { width: 36px; height: 36px; background: linear-gradient(135deg, #4f46e5, #818cf8); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 700; }
+        .sidebar-brand-icon { width: 36px; height: 36px; background: linear-gradient(135deg, #0f172a, #475569); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 700; }
         .sidebar-title { color: #fff; font-size: 1.1rem; font-weight: 700; }
         .sidebar-subtitle { font-size: 0.75rem; color: #64748b; text-transform: uppercase; }
 
         .sidebar-nav { padding: 1.25rem 0.75rem; flex: 1; display: flex; flex-direction: column; gap: 0.35rem; }
         .sidebar-nav-item { display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem 1rem; color: #94a3b8; border-radius: var(--radius-md); font-weight: 500; font-size: 0.95rem; transition: all 0.2s; }
         .sidebar-nav-item:hover { background-color: #1e293b; color: #fff; }
-        .sidebar-nav-item.active { background-color: var(--primary); color: #fff; box-shadow: 0 4px 12px rgba(79,70,229,0.3); }
+        .sidebar-nav-item.active { background-color: var(--primary); color: #fff; box-shadow: 0 4px 12px rgba(15,23,42,0.3); }
         .sidebar-nav-item.logout { margin-top: auto; color: #f87171; }
         .sidebar-nav-item.logout:hover { background-color: rgba(239,68,68,0.15); color: #fca5a5; }
 
@@ -56,7 +56,7 @@
         .form-group { display: flex; flex-direction: column; gap: 0.4rem; }
         .form-group label { font-size: 0.875rem; font-weight: 600; color: #334155; }
         .form-control { width: 100%; padding: 0.65rem 0.9rem; border: 1px solid var(--border-color); border-radius: var(--radius-md); font-size: 0.95rem; font-family: inherit; outline: none; transition: all 0.2s; }
-        .form-control:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(79,70,229,0.15); }
+        .form-control:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(15,23,42,0.15); }
         .form-control[readonly] { background-color: var(--bg-main); color: var(--text-muted); cursor: not-allowed; }
 
         .btn-group { display: flex; align-items: center; gap: 0.75rem; margin-top: 1.5rem; }

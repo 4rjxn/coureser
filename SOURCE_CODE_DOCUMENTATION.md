@@ -163,4 +163,3 @@ An embedded light HTTP web service handling RESTful client interactions using st
 - `POST /api/login`: User authentication endpoint.
 - `GET /api/courses`: Lists available catalog courses.
 - `POST /api/register`: Course registration endpoint.
-- `GET /api/student/summary`: Generates student enrollment summary report.

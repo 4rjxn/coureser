@@ -77,7 +77,6 @@ java -jar target/courser-1.0-SNAPSHOT.jar
 | `GET` | `/api/courses` | Retrieve list of all available courses | N/A |
 | `POST` | `/api/register` | Register student for a course | `{"studentId": 1, "courseId": 101}` |
 | `DELETE`| `/api/drop` | Drop an enrolled course | `{"studentId": 1, "courseId": 101}` |
-| `GET` | `/api/student/summary` | Fetch credit summary for student | Query Param: `?studentId=1` |
 
 ---
 
