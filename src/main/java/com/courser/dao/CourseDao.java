@@ -17,8 +17,8 @@ public class CourseDao {
             throw new IllegalArgumentException("Course cannot be null.");
         }
         String courseSql = """
-                INSERT INTO courses(course_code, title, credits, instructor_name, capacity)
-                VALUES (?, ?, ?, ?, ?)
+                INSERT INTO courses(course_code, title, description, credits, instructor_name, capacity)
+                VALUES (?, ?, ?, ?, ?, ?)
                 """;
         String preReqSql = """
                 INSERT OR IGNORE INTO course_prereq(course_code, prerequisite_id)
@@ -31,9 +31,10 @@ public class CourseDao {
                 try (PreparedStatement stmt = conn.prepareStatement(courseSql)) {
                     stmt.setString(1, course.getCourseCode());
                     stmt.setString(2, course.getTitle());
-                    stmt.setInt(3, course.getCredits());
-                    stmt.setString(4, course.getInstructorName());
-                    stmt.setInt(5, course.getCapacity());
+                    stmt.setString(3, course.getDescription());
+                    stmt.setInt(4, course.getCredits());
+                    stmt.setString(5, course.getInstructorName());
+                    stmt.setInt(6, course.getCapacity());
                     stmt.executeUpdate();
                 }
 
@@ -106,7 +107,7 @@ public class CourseDao {
         }
         String sql = """
                 UPDATE courses
-                SET course_code = ?, title = ?, credits = ?, instructor_name = ?, capacity = ?
+                SET course_code = ?, title = ?, description = ?, credits = ?, instructor_name = ?, capacity = ?
                 WHERE course_code = ?;
                 """;
         String deleteSql = "DELETE FROM course_prereq WHERE course_code = ?;";
@@ -122,10 +123,11 @@ public class CourseDao {
                 try (PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
                     preparedStatement.setString(1, course.getCourseCode());
                     preparedStatement.setString(2, course.getTitle());
-                    preparedStatement.setInt(3, course.getCredits());
-                    preparedStatement.setString(4, course.getInstructorName());
-                    preparedStatement.setInt(5, course.getCapacity());
-                    preparedStatement.setString(6, targetCode);
+                    preparedStatement.setString(3, course.getDescription());
+                    preparedStatement.setInt(4, course.getCredits());
+                    preparedStatement.setString(5, course.getInstructorName());
+                    preparedStatement.setInt(6, course.getCapacity());
+                    preparedStatement.setString(7, targetCode);
                     preparedStatement.executeUpdate();
                 }
 
@@ -158,7 +160,7 @@ public class CourseDao {
 
     public static Course[] searchCourse(String query, int limit, int offset) {
         String sql = """
-                SELECT course_code, title, credits, instructor_name, capacity
+                SELECT course_code, title, description, credits, instructor_name, capacity
                 FROM courses
                 WHERE course_code LIKE ?
                    OR title LIKE ?
@@ -182,10 +184,12 @@ public class CourseDao {
                         capacity = 30;
                     List<String> prereqs = getPrerequisites(code);
                     int enrolled = getEnrolledCount(code);
+                    String desc = result.getString("description");
 
                     Course course = new Course(
                             code,
                             result.getString("title"),
+                            desc != null ? desc : "",
                             result.getInt("credits"),
                             result.getString("instructor_name"),
                             prereqs,
@@ -203,7 +207,7 @@ public class CourseDao {
 
     public static List<Course> searchAllCourses(String query) {
         String sql = """
-                SELECT course_code, title, credits, instructor_name, capacity
+                SELECT course_code, title, description, credits, instructor_name, capacity
                 FROM courses
                 WHERE course_code LIKE ?
                    OR title LIKE ?
@@ -224,10 +228,12 @@ public class CourseDao {
                         capacity = 30;
                     List<String> prereqs = getPrerequisites(code);
                     int enrolled = getEnrolledCount(code);
+                    String desc = rs.getString("description");
 
                     Course course = new Course(
                             code,
                             rs.getString("title"),
+                            desc != null ? desc : "",
                             rs.getInt("credits"),
                             rs.getString("instructor_name"),
                             prereqs,
@@ -245,7 +251,7 @@ public class CourseDao {
     public static Course getCourseByCode(String courseCode) {
         if (courseCode == null || courseCode.isBlank())
             return null;
-        String sql = "SELECT course_code, title, credits, instructor_name, capacity FROM courses WHERE course_code = ?;";
+        String sql = "SELECT course_code, title, description, credits, instructor_name, capacity FROM courses WHERE course_code = ?;";
         try (Connection conn = Database.getConnection();
                 PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, courseCode.trim().toUpperCase());
@@ -257,10 +263,12 @@ public class CourseDao {
                         capacity = 30;
                     List<String> prereqs = getPrerequisites(code);
                     int enrolled = getEnrolledCount(code);
+                    String desc = rs.getString("description");
 
                     return new Course(
                             code,
                             rs.getString("title"),
+                            desc != null ? desc : "",
                             rs.getInt("credits"),
                             rs.getString("instructor_name"),
                             prereqs,

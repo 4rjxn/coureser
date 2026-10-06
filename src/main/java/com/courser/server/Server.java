@@ -23,7 +23,12 @@ public class Server {
                 respond(exchange, "template/index.html", Map.of());
             } else if ("/login".equals(path)) {
                 if ("POST".equalsIgnoreCase(exchange.getRequestMethod())) {
-                    redirect(exchange, "/admin/dashboard");
+                    Map<String, String> data = ServerUtils.getFormData(exchange);
+                    if (data.get("password").equals("admin") && data.get("username").equals("admin")) {
+                        redirect(exchange, "/admin/dashboard");
+                    } else {
+                        respond(exchange, "template/index.html", Map.of());
+                    }
                 } else {
                     respond(exchange, "template/index.html", Map.of());
                 }

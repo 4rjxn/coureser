@@ -345,13 +345,14 @@ class ServerHandles {
 
             String code = ServerUtils.getFirstStringParam(formMulti, "code", "");
             String title = ServerUtils.getFirstStringParam(formMulti, "title", "");
+            String description = ServerUtils.getFirstStringParam(formMulti, "description", "");
             int credits = ServerUtils.getFirstIntParam(formMulti, "credits", 3);
             int capacity = ServerUtils.getFirstIntParam(formMulti, "maxEnrollment", 30);
             String teacherId = ServerUtils.getFirstStringParam(formMulti, "teacherId", "Staff");
             List<String> prereqs = formMulti.get("prerequisites");
 
             if (!code.isBlank() && !title.isBlank()) {
-                Course course = new Course(code, title, credits, teacherId, prereqs, capacity);
+                Course course = new Course(code, title, description, credits, teacherId, prereqs, capacity, 0);
                 CourseServices.addNewCourse(course);
             }
             Server.redirect(exchange, "/admin/courses");
@@ -403,7 +404,7 @@ class ServerHandles {
                     "courseId", course.getCourseCode(),
                     "code", escapeHtml(course.getCourseCode()),
                     "title", escapeHtml(course.getTitle()),
-                    "description", "",
+                    "description", escapeHtml(course.getDescription()),
                     "credits", String.valueOf(course.getCredits()),
                     "maxEnrollment", String.valueOf(course.getCapacity()),
                     "teacherOptions", teacherOpts.toString(),
@@ -418,12 +419,13 @@ class ServerHandles {
             String courseId = ServerUtils.getFirstStringParam(formMulti, "courseId", "");
             String code = ServerUtils.getFirstStringParam(formMulti, "code", "");
             String title = ServerUtils.getFirstStringParam(formMulti, "title", "");
+            String description = ServerUtils.getFirstStringParam(formMulti, "description", "");
             int credits = ServerUtils.getFirstIntParam(formMulti, "credits", 3);
             int capacity = ServerUtils.getFirstIntParam(formMulti, "maxEnrollment", 30);
             String teacherId = ServerUtils.getFirstStringParam(formMulti, "teacherId", "Staff");
             List<String> prereqs = formMulti.get("prerequisites");
 
-            Course course = new Course(code, title, credits, teacherId, prereqs, capacity);
+            Course course = new Course(code, title, description, credits, teacherId, prereqs, capacity, 0);
             CourseServices.updateCourse(course, courseId);
             Server.redirect(exchange, "/admin/courses");
             return;

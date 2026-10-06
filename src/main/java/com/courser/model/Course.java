@@ -15,6 +15,7 @@ public class Course {
 
     private String courseCode;
     private String title;
+    private String description = "";
     private int credits;
     private String instructorName;
     private final List<String> prerequisiteCourses = new ArrayList<>();
@@ -23,25 +24,31 @@ public class Course {
 
     public Course(String courseCode, String title, int credits, String instructorName,
                   String[] prerequisiteCourses) {
-        this(courseCode, title, credits, instructorName,
+        this(courseCode, title, "", credits, instructorName,
                 prerequisiteCourses != null ? List.of(prerequisiteCourses) : Collections.emptyList(),
                 DEFAULT_CAPACITY, 0);
     }
 
     public Course(String courseCode, String title, int credits, String instructorName,
                   List<String> prerequisiteCourses) {
-        this(courseCode, title, credits, instructorName, prerequisiteCourses, DEFAULT_CAPACITY, 0);
+        this(courseCode, title, "", credits, instructorName, prerequisiteCourses, DEFAULT_CAPACITY, 0);
     }
 
     public Course(String courseCode, String title, int credits, String instructorName,
                   List<String> prerequisiteCourses, int capacity) {
-        this(courseCode, title, credits, instructorName, prerequisiteCourses, capacity, 0);
+        this(courseCode, title, "", credits, instructorName, prerequisiteCourses, capacity, 0);
     }
 
     public Course(String courseCode, String title, int credits, String instructorName,
                   List<String> prerequisiteCourses, int capacity, int enrolledCount) {
+        this(courseCode, title, "", credits, instructorName, prerequisiteCourses, capacity, enrolledCount);
+    }
+
+    public Course(String courseCode, String title, String description, int credits, String instructorName,
+                  List<String> prerequisiteCourses, int capacity, int enrolledCount) {
         setCourseCode(courseCode);
         setTitle(title);
+        setDescription(description);
         setCredits(credits);
         setInstructorName(instructorName);
         setCapacity(capacity);
@@ -69,6 +76,14 @@ public class Course {
 
     public void setTitle(String title) {
         this.title = Objects.requireNonNull(title, "Course title cannot be null").trim();
+    }
+
+    public String getDescription() {
+        return description != null ? description : "";
+    }
+
+    public void setDescription(String description) {
+        this.description = description != null ? description.trim() : "";
     }
 
     public int getCredits() {

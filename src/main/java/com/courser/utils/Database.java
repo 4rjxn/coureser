@@ -65,16 +65,21 @@ public class Database {
                         course_id INTEGER PRIMARY KEY AUTOINCREMENT,
                         course_code TEXT UNIQUE NOT NULL,
                         title TEXT NOT NULL,
+                        description TEXT DEFAULT '',
                         credits INTEGER NOT NULL,
                         instructor_name TEXT NOT NULL,
                         capacity INTEGER DEFAULT 30
                     );
                     """);
 
-            // Schema migration: Add capacity column to courses if it didn't exist in older
-            // versions
+            // Schema migration: Add capacity and description columns to courses if they didn't exist in older versions
             try {
                 stmt.execute("ALTER TABLE courses ADD COLUMN capacity INTEGER DEFAULT 30;");
+            } catch (SQLException ignored) {
+                // Column already exists
+            }
+            try {
+                stmt.execute("ALTER TABLE courses ADD COLUMN description TEXT DEFAULT '';");
             } catch (SQLException ignored) {
                 // Column already exists
             }
