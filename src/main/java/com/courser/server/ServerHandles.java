@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.courser.exception.RegistrationException;
 import com.courser.model.Course;
@@ -127,13 +128,59 @@ class ServerHandles {
             }
 
             if (student != null) {
+                Set<String> completedCodes = StudentServices.getCompletedCourses(student.getStudentId());
+                StringBuilder completedRows = new StringBuilder();
+                if (completedCodes.isEmpty()) {
+                    completedRows.append("<tr><td colspan=\"4\" style=\"text-align: center; color: #64748b;\">No completed course history recorded.</td></tr>");
+                } else {
+                    for (String code : completedCodes) {
+                        Course c = CourseServices.getCourseByCode(code);
+                        String title = c != null ? c.getTitle() : "N/A";
+                        int credits = c != null ? c.getCredits() : 0;
+                        completedRows.append("""
+                                <tr>
+                                    <td>%s</td>
+                                    <td>%s</td>
+                                    <td>%d</td>
+                                    <td>
+                                        <a href="/admin/students/remove-completed-course?userId=%d&studentId=%s&courseCode=%s" onclick="return confirm('Remove %s from completed courses?')">Remove</a>
+                                    </td>
+                                </tr>
+                                """.formatted(
+                                escapeHtml(code),
+                                escapeHtml(title),
+                                credits,
+                                student.getUserId(),
+                                urlEncode(student.getStudentId()),
+                                urlEncode(code),
+                                escapeHtml(code)));
+                    }
+                }
+
+                List<Course> allCourses = CourseServices.getAllCourses();
+                StringBuilder completedOpts = new StringBuilder();
+                for (Course c : allCourses) {
+                    if (!completedCodes.contains(c.getCourseCode())) {
+                        completedOpts.append("<option value=\"%s\">%s - %s (%d cr)</option>\n".formatted(
+                                escapeHtml(c.getCourseCode()),
+                                escapeHtml(c.getCourseCode()),
+                                escapeHtml(c.getTitle()),
+                                c.getCredits()));
+                    }
+                }
+                if (completedOpts.length() == 0) {
+                    completedOpts.append("<option value=\"\" disabled>All available courses already completed</option>\n");
+                }
+
                 Map<String, String> values = Map.of(
                         "userId", String.valueOf(student.getUserId()),
                         "username", escapeHtml(student.getUserName()),
                         "name", escapeHtml(student.getName()),
                         "email", escapeHtml(student.getEmail()),
                         "studentId", escapeHtml(student.getStudentId()),
-                        "maxCredits", String.valueOf(student.getMaxCredits()));
+                        "maxCredits", String.valueOf(student.getMaxCredits()),
+                        "completedCourseRows", completedRows.toString(),
+                        "completedCourseOptions", completedOpts.toString());
                 Server.respond(exchange, path, values);
             } else {
                 Server.redirect(exchange, "/admin/students");
@@ -156,6 +203,34 @@ class ServerHandles {
             return;
         }
         exchange.sendResponseHeaders(405, -1);
+    }
+
+    static void handleAdminStudentsAddCompletedCourse(HttpExchange exchange) throws IOException {
+        if ("POST".equalsIgnoreCase(exchange.getRequestMethod())) {
+            Map<String, String> form = ServerUtils.getFormData(exchange);
+            int userId = ServerUtils.getIntParam(form, "userId", 0);
+            String studentId = ServerUtils.getStringParam(form, "studentId", "");
+            String courseCode = ServerUtils.getStringParam(form, "courseCode", "");
+
+            if (!studentId.isBlank() && !courseCode.isBlank()) {
+                StudentServices.addCompletedCourse(studentId, courseCode);
+            }
+            Server.redirect(exchange, "/admin/students/edit?userId=" + userId + "&studentId=" + urlEncode(studentId));
+            return;
+        }
+        exchange.sendResponseHeaders(405, -1);
+    }
+
+    static void handleAdminStudentsRemoveCompletedCourse(HttpExchange exchange) throws IOException {
+        Map<String, String> params = ServerUtils.getQueryParams(exchange);
+        int userId = ServerUtils.getIntParam(params, "userId", 0);
+        String studentId = ServerUtils.getStringParam(params, "studentId", "");
+        String courseCode = ServerUtils.getStringParam(params, "courseCode", "");
+
+        if (!studentId.isBlank() && !courseCode.isBlank()) {
+            StudentServices.removeCompletedCourse(studentId, courseCode);
+        }
+        Server.redirect(exchange, "/admin/students/edit?userId=" + userId + "&studentId=" + urlEncode(studentId));
     }
 
     static void handleAdminStudentsDelete(HttpExchange exchange) throws IOException {
@@ -389,6 +464,7 @@ class ServerHandles {
         // 2. Populate selected student info and course options
         String selectedStudentDisplay = "None selected (search and select a student above)";
         StringBuilder courseOptions = new StringBuilder();
+        StringBuilder completedCourseRows = new StringBuilder();
         if (!selectedStudentId.isBlank()) {
             Student selectedStudent = StudentServices.getStudentByStudentId(selectedStudentId);
             if (selectedStudent != null) {
@@ -398,6 +474,34 @@ class ServerHandles {
                         selectedStudent.getRegisteredCredits(),
                         selectedStudent.getMaxCredits(),
                         selectedStudent.getRemainingCredits());
+
+                Set<String> completedCodes = StudentServices.getCompletedCourses(selectedStudent.getStudentId());
+                if (completedCodes.isEmpty()) {
+                    completedCourseRows.append("<tr><td colspan=\"4\" style=\"text-align: center; color: #64748b;\">No completed course history recorded.</td></tr>");
+                } else {
+                    for (String code : completedCodes) {
+                        Course c = CourseServices.getCourseByCode(code);
+                        String title = c != null ? c.getTitle() : "N/A";
+                        int credits = c != null ? c.getCredits() : 0;
+                        completedCourseRows.append("""
+                                <tr>
+                                    <td>%s</td>
+                                    <td>%s</td>
+                                    <td>%d</td>
+                                    <td>
+                                        <a href="/admin/students/remove-completed-course?userId=%d&studentId=%s&courseCode=%s" onclick="return confirm('Remove %s from completed courses?')">Remove</a>
+                                    </td>
+                                </tr>
+                                """.formatted(
+                                escapeHtml(code),
+                                escapeHtml(title),
+                                credits,
+                                selectedStudent.getUserId(),
+                                urlEncode(selectedStudent.getStudentId()),
+                                urlEncode(code),
+                                escapeHtml(code)));
+                    }
+                }
 
                 List<Course> allCourses = CourseServices.getAllCourses();
                 for (Course c : allCourses) {
@@ -430,6 +534,9 @@ class ServerHandles {
                             escapeHtml(statusNote)));
                 }
             }
+        }
+        if (completedCourseRows.length() == 0) {
+            completedCourseRows.append("<tr><td colspan=\"4\" style=\"text-align: center; color: #64748b;\">Select a student above to view completed courses.</td></tr>");
         }
 
         // 3. Populate current active registrations table
@@ -471,6 +578,7 @@ class ServerHandles {
         values.put("selectedStudent", escapeHtml(selectedStudentDisplay));
         values.put("studentId", escapeHtml(selectedStudentId));
         values.put("courseOptions", courseOptions.toString());
+        values.put("completedCourseRows", completedCourseRows.toString());
         values.put("registrationQuery", escapeHtml(regQuery));
         values.put("registrationRows", regRows.toString());
         values.put("previousPage", "/admin/registrations?studentId=" + urlEncode(selectedStudentId)

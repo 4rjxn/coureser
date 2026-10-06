@@ -55,6 +55,10 @@ public class Server {
                 exchange -> ServerHandles.handleAdminStudentsAdd(exchange, "template/admin/student-add.html"));
         server.createContext("/admin/students/edit",
                 exchange -> ServerHandles.handleAdminStudentsEdit(exchange, "template/admin/student-edit.html"));
+        server.createContext("/admin/students/add-completed-course",
+                exchange -> ServerHandles.handleAdminStudentsAddCompletedCourse(exchange));
+        server.createContext("/admin/students/remove-completed-course",
+                exchange -> ServerHandles.handleAdminStudentsRemoveCompletedCourse(exchange));
         server.createContext("/admin/students/delete",
                 exchange -> ServerHandles.handleAdminStudentsDelete(exchange));
 
