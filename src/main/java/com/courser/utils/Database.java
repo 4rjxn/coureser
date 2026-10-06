@@ -49,6 +49,16 @@ public class Database {
                     );
                     """);
 
+            // 3b. Teachers table
+            stmt.execute("""
+                    CREATE TABLE IF NOT EXISTS teachers (
+                        user_id INTEGER PRIMARY KEY,
+                        teacher_id TEXT UNIQUE NOT NULL,
+                        department TEXT,
+                        FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
+                    );
+                    """);
+
             // 4. Courses table
             stmt.execute("""
                     CREATE TABLE IF NOT EXISTS courses (

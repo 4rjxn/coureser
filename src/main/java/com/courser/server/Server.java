@@ -86,6 +86,18 @@ public class Server {
         server.createContext("/admin/registrations/delete",
                 exchange -> ServerHandles.handleAdminRegistrationsDrop(exchange));
 
+        // Teachers
+        server.createContext("/admin/teachers",
+                exchange -> ServerHandles.handleAdminTeachers(exchange, "template/admin/teachers.html"));
+        server.createContext("/admin/teachers/search",
+                exchange -> ServerHandles.handleAdminTeachers(exchange, "template/admin/teachers.html"));
+        server.createContext("/admin/teachers/add",
+                exchange -> ServerHandles.handleAdminTeachersAdd(exchange, "template/admin/teacher-add.html"));
+        server.createContext("/admin/teachers/edit",
+                exchange -> ServerHandles.handleAdminTeachersEdit(exchange, "template/admin/teacher-edit.html"));
+        server.createContext("/admin/teachers/delete",
+                exchange -> ServerHandles.handleAdminTeachersDelete(exchange));
+
         server.setExecutor(null);
         server.start();
         System.out.println("Server started listening on: " + PORT);

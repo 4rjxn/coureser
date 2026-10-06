@@ -444,4 +444,277 @@ public class UserDao {
         }
         return 0;
     }
+
+    // ==========================================
+    // Teacher DAO Methods
+    // ==========================================
+    public static void addTeacher(com.courser.model.Teacher teacher, String department) throws SQLException {
+        if (teacher == null) {
+            throw new IllegalArgumentException("Teacher cannot be null.");
+        }
+        String userAddSql = "INSERT INTO users(username, name, email) VALUES (?, ?, ?);";
+        String teacherAddSql = "INSERT INTO teachers(user_id, teacher_id, department) VALUES (?, ?, ?);";
+
+        try (Connection conn = Database.getConnection()) {
+            conn.setAutoCommit(false);
+            try {
+                int userId;
+                try (PreparedStatement userStmt = conn.prepareStatement(userAddSql)) {
+                    userStmt.setString(1, teacher.getUserName());
+                    userStmt.setString(2, teacher.getName());
+                    userStmt.setString(3, teacher.getEmail());
+                    userStmt.executeUpdate();
+                }
+
+                try (Statement idStmt = conn.createStatement();
+                        ResultSet rs = idStmt.executeQuery("SELECT last_insert_rowid();")) {
+                    if (!rs.next()) {
+                        throw new SQLException("Failed to get generated user id for teacher.");
+                    }
+                    userId = rs.getInt(1);
+                    teacher.setUserId(userId);
+                }
+
+                try (PreparedStatement teacherStmt = conn.prepareStatement(teacherAddSql)) {
+                    teacherStmt.setInt(1, userId);
+                    teacherStmt.setString(2, teacher.getTeacherId());
+                    teacherStmt.setString(3, department != null ? department : "");
+                    teacherStmt.executeUpdate();
+                }
+
+                conn.commit();
+            } catch (SQLException e) {
+                conn.rollback();
+                throw e;
+            } finally {
+                conn.setAutoCommit(true);
+            }
+        }
+    }
+
+    public static void updateTeacher(com.courser.model.Teacher teacher, String department) throws SQLException {
+        if (teacher == null) {
+            throw new IllegalArgumentException("Teacher cannot be null.");
+        }
+        String userSql = "UPDATE users SET username = ?, name = ?, email = ? WHERE user_id = ?;";
+        String teacherSql = "UPDATE teachers SET teacher_id = ?, department = ? WHERE user_id = ?;";
+
+        try (Connection conn = Database.getConnection()) {
+            conn.setAutoCommit(false);
+            try {
+                try (PreparedStatement userStmt = conn.prepareStatement(userSql)) {
+                    userStmt.setString(1, teacher.getUserName());
+                    userStmt.setString(2, teacher.getName());
+                    userStmt.setString(3, teacher.getEmail());
+                    userStmt.setInt(4, teacher.getUserId());
+                    userStmt.executeUpdate();
+                }
+
+                try (PreparedStatement teacherStmt = conn.prepareStatement(teacherSql)) {
+                    teacherStmt.setString(1, teacher.getTeacherId());
+                    teacherStmt.setString(2, department != null ? department : "");
+                    teacherStmt.setInt(3, teacher.getUserId());
+                    teacherStmt.executeUpdate();
+                }
+
+                conn.commit();
+            } catch (SQLException e) {
+                conn.rollback();
+                throw e;
+            } finally {
+                conn.setAutoCommit(true);
+            }
+        }
+    }
+
+    public static boolean removeTeacher(int userId) throws SQLException {
+        String deleteTeacherSql = "DELETE FROM teachers WHERE user_id = ?;";
+        String deleteUserSql = "DELETE FROM users WHERE user_id = ?;";
+
+        try (Connection conn = Database.getConnection()) {
+            conn.setAutoCommit(false);
+            try {
+                try (PreparedStatement stmt = conn.prepareStatement(deleteTeacherSql)) {
+                    stmt.setInt(1, userId);
+                    stmt.executeUpdate();
+                }
+                int affected;
+                try (PreparedStatement stmt = conn.prepareStatement(deleteUserSql)) {
+                    stmt.setInt(1, userId);
+                    affected = stmt.executeUpdate();
+                }
+                conn.commit();
+                return affected > 0;
+            } catch (SQLException e) {
+                conn.rollback();
+                throw e;
+            } finally {
+                conn.setAutoCommit(true);
+            }
+        }
+    }
+
+    public static boolean removeTeacherByTeacherId(String teacherId) throws SQLException {
+        if (teacherId == null || teacherId.isBlank())
+            return false;
+        String findSql = "SELECT user_id FROM teachers WHERE teacher_id = ?;";
+        try (Connection conn = Database.getConnection()) {
+            int userId = -1;
+            try (PreparedStatement stmt = conn.prepareStatement(findSql)) {
+                stmt.setString(1, teacherId.trim());
+                try (ResultSet rs = stmt.executeQuery()) {
+                    if (rs.next()) {
+                        userId = rs.getInt(1);
+                    }
+                }
+            }
+            if (userId != -1) {
+                return removeTeacher(userId);
+            }
+        }
+        return false;
+    }
+
+    public static com.courser.model.Teacher[] searchTeacher(String query, int limit, int offset) throws SQLException {
+        String sqlQuery = """
+                SELECT u.user_id, u.username, u.name, u.email, t.teacher_id, t.department
+                FROM users u
+                JOIN teachers t ON u.user_id = t.user_id
+                WHERE t.teacher_id LIKE ? OR u.name LIKE ?
+                ORDER BY u.name
+                LIMIT ? OFFSET ?;
+                """;
+        try (Connection conn = Database.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(sqlQuery)) {
+            String pattern = "%" + (query != null ? query.trim() : "") + "%";
+            stmt.setString(1, pattern);
+            stmt.setString(2, pattern);
+            stmt.setInt(3, limit);
+            stmt.setInt(4, offset);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                List<com.courser.model.Teacher> teachers = new ArrayList<>();
+                while (rs.next()) {
+                    com.courser.model.Teacher teacher = new com.courser.model.Teacher(
+                            rs.getInt("user_id"),
+                            rs.getString("username"),
+                            rs.getString("name"),
+                            rs.getString("email"),
+                            rs.getString("teacher_id"));
+                    teachers.add(teacher);
+                }
+                return teachers.toArray(new com.courser.model.Teacher[0]);
+            }
+        }
+    }
+
+    public static List<com.courser.model.Teacher> searchAllTeachers(String query) {
+        String sqlQuery = """
+                SELECT u.user_id, u.username, u.name, u.email, t.teacher_id, t.department
+                FROM users u
+                JOIN teachers t ON u.user_id = t.user_id
+                WHERE t.teacher_id LIKE ? OR u.name LIKE ?
+                ORDER BY u.name;
+                """;
+        List<com.courser.model.Teacher> list = new ArrayList<>();
+        try (Connection conn = Database.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(sqlQuery)) {
+            String pattern = "%" + (query != null ? query.trim() : "") + "%";
+            stmt.setString(1, pattern);
+            stmt.setString(2, pattern);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    com.courser.model.Teacher teacher = new com.courser.model.Teacher(
+                            rs.getInt("user_id"),
+                            rs.getString("username"),
+                            rs.getString("name"),
+                            rs.getString("email"),
+                            rs.getString("teacher_id"));
+                    list.add(teacher);
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("UserDao.searchAllTeachers error: " + e.getMessage());
+        }
+        return list;
+    }
+
+    public static com.courser.model.Teacher getTeacherFromUserId(int id) throws SQLException {
+        String sqlQuery = """
+                SELECT u.user_id, u.username, u.name, u.email, t.teacher_id, t.department
+                FROM users u
+                JOIN teachers t ON u.user_id = t.user_id
+                WHERE u.user_id = ?;
+                """;
+        try (Connection conn = Database.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(sqlQuery)) {
+            stmt.setInt(1, id);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return new com.courser.model.Teacher(
+                            rs.getInt("user_id"),
+                            rs.getString("username"),
+                            rs.getString("name"),
+                            rs.getString("email"),
+                            rs.getString("teacher_id"));
+                }
+            }
+        }
+        return null;
+    }
+
+    public static com.courser.model.Teacher getTeacherByTeacherId(String teacherId) {
+        if (teacherId == null || teacherId.isBlank())
+            return null;
+        String sqlQuery = """
+                SELECT u.user_id, u.username, u.name, u.email, t.teacher_id, t.department
+                FROM users u
+                JOIN teachers t ON u.user_id = t.user_id
+                WHERE t.teacher_id = ?;
+                """;
+        try (Connection conn = Database.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(sqlQuery)) {
+            stmt.setString(1, teacherId.trim());
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return new com.courser.model.Teacher(
+                            rs.getInt("user_id"),
+                            rs.getString("username"),
+                            rs.getString("name"),
+                            rs.getString("email"),
+                            rs.getString("teacher_id"));
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("UserDao.getTeacherByTeacherId error: " + e.getMessage());
+        }
+        return null;
+    }
+
+    public static String getTeacherDepartment(int userId) {
+        String sql = "SELECT department FROM teachers WHERE user_id = ?;";
+        try (Connection conn = Database.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, userId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next())
+                    return rs.getString("department");
+            }
+        } catch (Exception ignored) {
+        }
+        return "";
+    }
+
+    public static int getTotalTeacherCount() {
+        String sql = "SELECT COUNT(*) FROM teachers;";
+        try (Connection conn = Database.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(sql);
+                ResultSet rs = stmt.executeQuery()) {
+            if (rs.next())
+                return rs.getInt(1);
+        } catch (Exception ignored) {
+        }
+        return 0;
+    }
 }

@@ -10,10 +10,12 @@ import com.courser.exception.RegistrationException;
 import com.courser.model.Course;
 import com.courser.model.Registration;
 import com.courser.model.Student;
+import com.courser.model.Teacher;
 import com.courser.services.CourseServices;
 import com.courser.services.RegistrationService;
 import com.courser.services.StudentServices;
 import com.courser.services.SummaryService;
+import com.courser.services.TeacherServices;
 import com.sun.net.httpserver.HttpExchange;
 
 class ServerHandles {
@@ -131,29 +133,32 @@ class ServerHandles {
                 Set<String> completedCodes = StudentServices.getCompletedCourses(student.getStudentId());
                 StringBuilder completedRows = new StringBuilder();
                 if (completedCodes.isEmpty()) {
-                    completedRows.append("<tr><td colspan=\"4\" style=\"text-align: center; color: #64748b;\">No completed course history recorded.</td></tr>");
+                    completedRows.append(
+                            "<tr><td colspan=\"4\" style=\"text-align: center; color: #64748b;\">No completed course history recorded.</td></tr>");
                 } else {
                     for (String code : completedCodes) {
                         Course c = CourseServices.getCourseByCode(code);
                         String title = c != null ? c.getTitle() : "N/A";
                         int credits = c != null ? c.getCredits() : 0;
-                        completedRows.append("""
-                                <tr>
-                                    <td>%s</td>
-                                    <td>%s</td>
-                                    <td>%d</td>
-                                    <td>
-                                        <a href="/admin/students/remove-completed-course?userId=%d&studentId=%s&courseCode=%s" onclick="return confirm('Remove %s from completed courses?')">Remove</a>
-                                    </td>
-                                </tr>
-                                """.formatted(
-                                escapeHtml(code),
-                                escapeHtml(title),
-                                credits,
-                                student.getUserId(),
-                                urlEncode(student.getStudentId()),
-                                urlEncode(code),
-                                escapeHtml(code)));
+                        completedRows
+                                .append("""
+                                        <tr>
+                                            <td>%s</td>
+                                            <td>%s</td>
+                                            <td>%d</td>
+                                            <td>
+                                                <a href="/admin/students/remove-completed-course?userId=%d&studentId=%s&courseCode=%s" onclick="return confirm('Remove %s from completed courses?')">Remove</a>
+                                            </td>
+                                        </tr>
+                                        """
+                                        .formatted(
+                                                escapeHtml(code),
+                                                escapeHtml(title),
+                                                credits,
+                                                student.getUserId(),
+                                                urlEncode(student.getStudentId()),
+                                                urlEncode(code),
+                                                escapeHtml(code)));
                     }
                 }
 
@@ -169,7 +174,8 @@ class ServerHandles {
                     }
                 }
                 if (completedOpts.length() == 0) {
-                    completedOpts.append("<option value=\"\" disabled>All available courses already completed</option>\n");
+                    completedOpts
+                            .append("<option value=\"\" disabled>All available courses already completed</option>\n");
                 }
 
                 Map<String, String> values = Map.of(
@@ -316,12 +322,16 @@ class ServerHandles {
                                 escapeHtml(c.getTitle())));
             }
 
+            List<com.courser.model.Teacher> allTeachers = TeacherServices.getAllTeachers();
             StringBuilder teacherOpts = new StringBuilder();
-            teacherOpts.append("<option value=\"Prof. Alan Turing\">Prof. Alan Turing</option>\n");
-            teacherOpts.append("<option value=\"Prof. Ada Lovelace\">Prof. Ada Lovelace</option>\n");
-            teacherOpts.append("<option value=\"Prof. Grace Hopper\">Prof. Grace Hopper</option>\n");
-            teacherOpts.append("<option value=\"Prof. Donald Knuth\">Prof. Donald Knuth</option>\n");
-            teacherOpts.append("<option value=\"Dr. Claude Shannon\">Dr. Claude Shannon</option>\n");
+            if (allTeachers.isEmpty()) {
+                teacherOpts.append("<option value=\"Staff\">Staff</option>\n");
+            } else {
+                for (com.courser.model.Teacher t : allTeachers) {
+                    teacherOpts.append("<option value=\"%s\">%s (%s)</option>\n"
+                            .formatted(escapeHtml(t.getName()), escapeHtml(t.getName()), escapeHtml(t.getTeacherId())));
+                }
+            }
 
             Map<String, String> values = Map.of(
                     "prerequisiteOptions", prereqOpts.toString(),
@@ -374,15 +384,19 @@ class ServerHandles {
                 }
             }
 
+            List<com.courser.model.Teacher> allTeachers = TeacherServices.getAllTeachers();
             StringBuilder teacherOpts = new StringBuilder();
-            String[] teachers = {
-                    "Prof. Alan Turing", "Prof. Ada Lovelace", "Prof. Grace Hopper",
-                    "Prof. Donald Knuth", "Dr. Claude Shannon"
-            };
-            for (String t : teachers) {
-                boolean isSel = t.equalsIgnoreCase(course.getInstructorName());
-                teacherOpts.append("<option value=\"%s\" %s>%s</option>\n"
-                        .formatted(escapeHtml(t), isSel ? "selected" : "", escapeHtml(t)));
+            if (allTeachers.isEmpty()) {
+                boolean isSel = "Staff".equalsIgnoreCase(course.getInstructorName());
+                teacherOpts.append("<option value=\"Staff\" %s>Staff</option>\n".formatted(isSel ? "selected" : ""));
+            } else {
+                for (com.courser.model.Teacher t : allTeachers) {
+                    boolean isSel = t.getName().equalsIgnoreCase(course.getInstructorName())
+                            || t.getTeacherId().equalsIgnoreCase(course.getInstructorName());
+                    teacherOpts.append("<option value=\"%s\" %s>%s (%s)</option>\n"
+                            .formatted(escapeHtml(t.getName()), isSel ? "selected" : "", escapeHtml(t.getName()),
+                                    escapeHtml(t.getTeacherId())));
+                }
             }
 
             Map<String, String> values = Map.of(
@@ -477,29 +491,32 @@ class ServerHandles {
 
                 Set<String> completedCodes = StudentServices.getCompletedCourses(selectedStudent.getStudentId());
                 if (completedCodes.isEmpty()) {
-                    completedCourseRows.append("<tr><td colspan=\"4\" style=\"text-align: center; color: #64748b;\">No completed course history recorded.</td></tr>");
+                    completedCourseRows.append(
+                            "<tr><td colspan=\"4\" style=\"text-align: center; color: #64748b;\">No completed course history recorded.</td></tr>");
                 } else {
                     for (String code : completedCodes) {
                         Course c = CourseServices.getCourseByCode(code);
                         String title = c != null ? c.getTitle() : "N/A";
                         int credits = c != null ? c.getCredits() : 0;
-                        completedCourseRows.append("""
-                                <tr>
-                                    <td>%s</td>
-                                    <td>%s</td>
-                                    <td>%d</td>
-                                    <td>
-                                        <a href="/admin/students/remove-completed-course?userId=%d&studentId=%s&courseCode=%s" onclick="return confirm('Remove %s from completed courses?')">Remove</a>
-                                    </td>
-                                </tr>
-                                """.formatted(
-                                escapeHtml(code),
-                                escapeHtml(title),
-                                credits,
-                                selectedStudent.getUserId(),
-                                urlEncode(selectedStudent.getStudentId()),
-                                urlEncode(code),
-                                escapeHtml(code)));
+                        completedCourseRows
+                                .append("""
+                                        <tr>
+                                            <td>%s</td>
+                                            <td>%s</td>
+                                            <td>%d</td>
+                                            <td>
+                                                <a href="/admin/students/remove-completed-course?userId=%d&studentId=%s&courseCode=%s" onclick="return confirm('Remove %s from completed courses?')">Remove</a>
+                                            </td>
+                                        </tr>
+                                        """
+                                        .formatted(
+                                                escapeHtml(code),
+                                                escapeHtml(title),
+                                                credits,
+                                                selectedStudent.getUserId(),
+                                                urlEncode(selectedStudent.getStudentId()),
+                                                urlEncode(code),
+                                                escapeHtml(code)));
                     }
                 }
 
@@ -536,7 +553,8 @@ class ServerHandles {
             }
         }
         if (completedCourseRows.length() == 0) {
-            completedCourseRows.append("<tr><td colspan=\"4\" style=\"text-align: center; color: #64748b;\">Select a student above to view completed courses.</td></tr>");
+            completedCourseRows.append(
+                    "<tr><td colspan=\"4\" style=\"text-align: center; color: #64748b;\">Select a student above to view completed courses.</td></tr>");
         }
 
         // 3. Populate current active registrations table
@@ -643,6 +661,152 @@ class ServerHandles {
             RegistrationService.dropCourse(studentId, courseCode);
         }
         Server.redirect(exchange, "/admin/registrations?studentId=" + urlEncode(studentId));
+    }
+
+    // ==========================================
+    // Teacher Management
+    // ==========================================
+    static void handleAdminTeachers(HttpExchange exchange, String path) throws IOException {
+        Map<String, String> params = ServerUtils.getQueryParams(exchange);
+        Map<String, String> values = new HashMap<>();
+
+        String query = ServerUtils.getStringParam(params, "query", "");
+        int page = ServerUtils.getIntParam(params, "page", 1);
+        if (page < 1)
+            page = 1;
+        final int limit = 10;
+        int offset = (page - 1) * limit;
+
+        com.courser.model.Teacher[] teachers = TeacherServices.searchTeachers(query, limit, offset);
+        int teacherCount = TeacherServices.getTotalCount();
+        int totalPages = (int) Math.ceil((double) Math.max(1, teacherCount) / limit);
+
+        StringBuilder rows = new StringBuilder();
+        if (teachers != null) {
+            for (com.courser.model.Teacher t : teachers) {
+                String dept = TeacherServices.getTeacherDepartment(t.getUserId());
+                rows.append(
+                        """
+                                <tr>
+                                    <td>%s</td>
+                                    <td>%s</td>
+                                    <td>%s</td>
+                                    <td>%s</td>
+                                    <td>%s</td>
+                                    <td>
+                                        <a href="/admin/teachers/edit?userId=%d">Edit</a> |
+                                        <a href="/admin/teachers/delete?userId=%d" onclick="return confirm('Are you sure you want to delete teacher %s?')">Delete</a>
+                                    </td>
+                                </tr>
+                                """
+                                .formatted(
+                                        escapeHtml(t.getTeacherId()),
+                                        escapeHtml(t.getName()),
+                                        escapeHtml(t.getUserName()),
+                                        escapeHtml(t.getEmail()),
+                                        escapeHtml(dept),
+                                        t.getUserId(),
+                                        t.getUserId(),
+                                        escapeHtml(t.getTeacherId())));
+            }
+        }
+
+        values.put("teacherRows", rows.toString());
+        values.put("previousPage", "/admin/teachers?query=" + urlEncode(query) + "&page=" + Math.max(1, page - 1));
+        values.put("currentPage", String.valueOf(page));
+        values.put("totalPages", String.valueOf(totalPages));
+        values.put("nextPage", "/admin/teachers?query=" + urlEncode(query) + "&page=" + Math.min(totalPages, page + 1));
+        values.put("teacherCount", String.valueOf(teacherCount));
+        values.put("query", escapeHtml(query));
+
+        Server.respond(exchange, path, values);
+    }
+
+    static void handleAdminTeachersAdd(HttpExchange exchange, String path) throws IOException {
+        if ("GET".equalsIgnoreCase(exchange.getRequestMethod())) {
+            Server.respond(exchange, path, Map.of());
+            return;
+        }
+
+        if ("POST".equalsIgnoreCase(exchange.getRequestMethod())) {
+            Map<String, String> form = ServerUtils.getFormData(exchange);
+            String username = ServerUtils.getStringParam(form, "username", "");
+            String teacherId = ServerUtils.getStringParam(form, "teacherId", "");
+            String name = ServerUtils.getStringParam(form, "name", "");
+            String email = ServerUtils.getStringParam(form, "email", "");
+            String department = ServerUtils.getStringParam(form, "department", "");
+
+            if (!username.isBlank() && !teacherId.isBlank() && !name.isBlank()) {
+                com.courser.model.Teacher teacher = new com.courser.model.Teacher(username, name, email, teacherId);
+                try {
+                    TeacherServices.registerNewTeacher(teacher, department);
+                } catch (Exception e) {
+                    System.err.println("Failed to add teacher: " + e.getMessage());
+                }
+            }
+            Server.redirect(exchange, "/admin/teachers");
+            return;
+        }
+        exchange.sendResponseHeaders(405, -1);
+    }
+
+    static void handleAdminTeachersEdit(HttpExchange exchange, String path) throws IOException {
+        if ("GET".equalsIgnoreCase(exchange.getRequestMethod())) {
+            Map<String, String> params = ServerUtils.getQueryParams(exchange);
+            int userId = ServerUtils.getIntParam(params, "userId", -1);
+            String teacherId = ServerUtils.getStringParam(params, "teacherId", "");
+
+            com.courser.model.Teacher teacher = null;
+            if (userId > 0) {
+                teacher = TeacherServices.getTeacherFromUserId(userId);
+            } else if (!teacherId.isBlank()) {
+                teacher = TeacherServices.getTeacherByTeacherId(teacherId);
+            }
+
+            if (teacher != null) {
+                String dept = TeacherServices.getTeacherDepartment(teacher.getUserId());
+                Map<String, String> values = Map.of(
+                        "userId", String.valueOf(teacher.getUserId()),
+                        "username", escapeHtml(teacher.getUserName()),
+                        "name", escapeHtml(teacher.getName()),
+                        "email", escapeHtml(teacher.getEmail()),
+                        "teacherId", escapeHtml(teacher.getTeacherId()),
+                        "department", escapeHtml(dept));
+                Server.respond(exchange, path, values);
+            } else {
+                Server.redirect(exchange, "/admin/teachers");
+            }
+            return;
+        }
+
+        if ("POST".equalsIgnoreCase(exchange.getRequestMethod())) {
+            Map<String, String> form = ServerUtils.getFormData(exchange);
+            int userId = ServerUtils.getIntParam(form, "userId", 0);
+            String username = ServerUtils.getStringParam(form, "username", "");
+            String teacherId = ServerUtils.getStringParam(form, "teacherId", "");
+            String name = ServerUtils.getStringParam(form, "name", "");
+            String email = ServerUtils.getStringParam(form, "email", "");
+            String department = ServerUtils.getStringParam(form, "department", "");
+
+            com.courser.model.Teacher teacher = new com.courser.model.Teacher(userId, username, name, email, teacherId);
+            TeacherServices.editTeacherDetails(teacher, department);
+            Server.redirect(exchange, "/admin/teachers");
+            return;
+        }
+        exchange.sendResponseHeaders(405, -1);
+    }
+
+    static void handleAdminTeachersDelete(HttpExchange exchange) throws IOException {
+        Map<String, String> params = ServerUtils.getQueryParams(exchange);
+        int userId = ServerUtils.getIntParam(params, "userId", -1);
+        String teacherId = ServerUtils.getStringParam(params, "teacherId", "");
+
+        if (userId > 0) {
+            TeacherServices.removeTeacherByUserId(userId);
+        } else if (!teacherId.isBlank()) {
+            TeacherServices.removeTeacher(teacherId);
+        }
+        Server.redirect(exchange, "/admin/teachers");
     }
 
     // ==========================================
